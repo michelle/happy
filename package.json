@@ -8,7 +8,7 @@
     "start": "node server.js"
   },
   "repository": "",
-  "author": "",
+  "author": "Michelle Bu",
   "license": "BSD",
   "dependencies": {
     "ejs": "~0.8.3",

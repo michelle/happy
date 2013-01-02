@@ -9,7 +9,20 @@ var client = new voicejs.Client({
   tokens: require('./tokens.json')
 });
 
-client.on('status', function(status){
-    console.log('UPDATED ACCOUNT STATUS:')
-    console.log(status);
-});
+function spamGoogleVoice() {
+  client.get('unread', { limit: Infinity }, function(err, res, data) {
+    console.log(data);
+    var conversations = data.conversations_response.conversation;
+    for (var i = 0; i < conversations.length; i += 1) {
+      var conv = conversations[i];
+      client.set('mark', { id: conv.id, read: true, archive: true }, function(err, res, data) {
+        if (err) {
+          console.log(err);
+        }
+      });
+    }
+  });
+};
+
+spamGoogleVoice();
+setInterval(spamGoogleVoice, 5000);
