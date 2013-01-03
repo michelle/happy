@@ -1,7 +1,6 @@
 var express = require('express');
 var fs = require('fs');
 var app = express.createServer();
-var io = require('socket.io').listen(app);
 
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
@@ -29,218 +28,50 @@ var DEFAULT_COLOR = '#dcc2e2';
  *  sms: optional, unique,
  *  twitter: optional, unique,
  *  color: optional, default=purple,
- *  sessions: [hashes],
  *  ignore: default=false, optional, -- don't send emails if true.
- *  happiness: [happinesses]
- * },
- * generic, used to store random happinesses: {
- *  username: generic,
- *  password: None,
- *  happiness: [happinesses]
+ *  happiness: default=0
  * }
  */
 var users = db.collection('users');
 users.ensureIndex({ 'username' : 1 });
+/**
+ * Happiness: {
+ *  username: String,
+ *  date: Date,
+ *  message: String
+ * }
+ */
+var happies = db.collection('2013happies');
 
 
 /** Generate random session ID. */
-function sessionId() {
+function randomId() {
   return Math.random().toString(36).substr(2);
 };
 
-/** Provides session id to save to clientside. */
-function login(username, cb) {
-  var id = sessionId();
-  users.findAndModify({ username: username },
-    {},
-    { $push: { sessions: id } },
-    function(err, entry) {
-      var color = entry.color || DEFAULT_COLOR;
-      cb(id, color);
-    });
-};
-
-
-/** SocketIO setup */
-io.sockets.on('connection', function(socket) {
-  // Sends to the client side number of happinesses, email & sms & color options.
-  socket.on('init', function(data) {
-    users.findOne({ username: data.username }, function(err, user) {
-      // Confirm session ID.
-      if (user.sessions.indexOf(data.session) != -1) {
-        socket.emit('init', { count: user.happiness.length });
-      }
-    });
-  });
-
-  // Triggered when the client closes the window; saves their color choice.
-  socket.on('leave', function(data) {
-    if (!!data.username) {
-      users.update({ username: data.username, color: data.color }, {}, function() {});
-    }
-    // Shouldn't be called without a username.
-  });
-
-  // Retrieves a random happiness for the user, else return generic.
-  socket.on('random_happy', function(data) {
-    users.findOne({ username: data.username }, function(err, user) {
-      // TODO: error handling?
-      // Confirm session ID.
-      if (user.sessions.indexOf(data.session) != -1 && user.happiness.length > 0) {
-        var happiness = user.happiness[Math.floor(Math.random() * user.happiness.length)];
-        socket.emit('random_happy', { happiness: happiness });
-      } else {
-        // TODO: insert a generic user.
-        users.findOne({ username: 'generic' }, function(err, generic) {
-          if (!err) {
-            var happiness = generic.happiness[Math.floor(Math.random() * generic.happiness.length)];
-            socket.emit('random_happy', { happiness: happiness });
-          }
-        });
-      });
-  });
-
-  // Removes session ID from user on logout.
-  socket.on('logout', function(data) {
-    users.update({ username: data.username },
-      { $pull: { sessions: data.sessions }},
-      {},
-      function(err) {
-        if (!err) {
-          socket.emit('logout');
-        } else {
-          console.log('+ logout', err);
-        }
-      });
-  });
-
-  // Saves user email, sms, twitter settings, errors if already used.
-  socket.on('save', function(data) {
-    // TODO: check to see what changed.
-    users.update({ username: data.username },
-      { $set: { email: data.email, twitter: data.twitter, sms: data.sms }},
-      {},
-      function(err) {
-        if (!err) {
-          socket.emit('saved');
-        } else {
-          console.log('+ save', err);
-        }
-      });
-  });
-
-  // Registers/logs in a user, saves session ID, errors if already taken username.
-  socket.on('login', function(data) {
-    // if data.type == register, then error should say username taken.
-    // otherwise error should say wrong pw. done on front end?
-    if (!data.password) {
-      socket.emit('login-error', { err: 'Please enter a password.' });
-      return;
-    }
-    users.findOne({ username: data.username }, function(err, res) {
-      if (data.type == 'login') {
-        if (!err && !!res && !!res.hash) {
-          bcrypt.compare(data.password, res.hash, function(err, match) {
-            if (match) {
-              login(data.username, function(session, color) {
-                socket.emit('session', { id: session, color: color });
-              });
-            } else {
-              socket.emit('login-error', { err: 'Username and password do not match.' });
-          });
-        } else {
-          console.log(err);
-          socket.emit('login-error', { err: err });
-        }
-      } else {
-        // Register.
-        if (!res) {
-          bcrypt.genSalt(10, function(err, salt) {
-            bcrypt.hash(data.password, salt, function(err, hash) {
-              // Save new user to database.
-              users.insert({
-                username: data.username,
-                hash: hash,
-                happiness: [],
-                sessions: [],
-                count: 0
-              }, {}, function() {
-                login(data.username, function(session, color) {
-                  socket.emit('session', { id: session, color: color });
-                });
-              });
-            });
-          });
-        } else {
-          socket.emit('login-error', { err: 'Username is taken.' });
-        }
-      }
-    });
-
-  });
-
-  // Saves a happiness.
-  socket.on('happy', function(data) {
-    users.update({ username: data.username },
-      { $push: { happiness: { date: new Date(), message: data.happiness } } },
-      {},
-      function(err) {
-        if (!err) {
-          socket.emit('happiness');
-        } else {
-          console.log('+ happy', err);
-        }
-      });
-  });
-
-  // TODO: Sends a lost password email.
-  socket.on('lost', function(data) {
-    if (data.email) {
-      users.findOne({ email: data.email }, function(err, res) {
-        if (!err && !!res) {
-          var random = sessionId();
-          while (!!lostUsers[random]) {
-            random = sessionId();
-          }
-
-          var randomUrl = 'http://happinessjar.com/reset/' + random;
-          var msg = {
-            text:    'Hi, ' + res.username + '. Please visit ' + randomURL + ' to change your password to something that\'s easy to remember.',
-            from:    'Happiness Jar <thehappinessjar@gmail.com>',
-            to:      res.email,
-            subject: '[Happiness Jar] Reset your password.',
-          };
-
-          mailer.send(msg, function(err, message) {
-            if (err) {
-              socket.emit('error', 'Message could not be sent.');
-            } else {
-              lost.push(random);
-              lostUsers[random] = res.username;
-              socket.emit('info', 'A password reset link has been sent to your email.');
-            }
-          });
-        } else {
-          socket.emit('error', 'Email does not belong to an account.');
-        }
-      });
-    } else {
-      socket.emit('error', 'Please enter an email.');
-    }
-  });
-});
 
 
 // Initialize main server
 app.use(express.bodyParser());
 
 app.use(express.static(__dirname + '/public'));
+app.use(express.session({ maxAge : new Date(Date.now() + 2628000000) }));
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
 app.get('/', function(req, res) {
-  res.render('index');
+  if (req.session.username) {
+    users.findOne({ username: req.session.username }, function(err, user) {
+      if (!!user) {
+        res.render('index', { user: JSON.stringify(user) });
+      } else {
+        res.redirect('/logout');
+      }
+    });
+  } else {
+    res.render('index');
+  }
 });
 
 // Password reset page.
@@ -261,7 +92,174 @@ app.post('/reset/:key', function(req, res) {
   } else {
     res.redirect('/');
   }
+});
 
+// Triggered when the client closes the window; saves their color choice.
+app.post('/leave', function(req, res) {
+  if (req.session.username) {
+    users.update({ username: req.session.username, color: req.body.color }, {}, function() {});
+  }
+  // Shouldn't be called without a username.
+});
+
+// Removes session from user on logout.
+app.get('/logout', function(req, res) {
+  req.session.username = null;
+  res.redirect('/');
+});
+
+// Retrieves a random happiness for the user, else return generic.
+app.get('/random_happy', function(req, res) {
+  happies.find({ username: req.session.username }).toArray(function(err, h) {
+    if (!err) {
+      if (h.length > 0) {
+        var happiness = h[Math.floor(Math.random() * h.length)];
+        res.send({ happiness: happiness });
+      } else {
+        happies.find({ username: '' }).toArray(function(err, h) {
+          if (!err) {
+            var happiness = h[Math.floor(Math.random() * h.length)];
+            res.send({ happiness: happiness });
+          }
+        });
+      }
+    } else {
+      res.send({ err: 'Nothing found' });
+    }
+  });
+});
+
+// logs in a user, saves session ID, errors if already taken username.
+app.post('/login', function(req, res) {
+  // if data.type == register, then error should say username taken.
+  // otherwise error should say wrong pw. done on front end?
+  if (!req.body.username || !req.body.password) {
+    res.send({ err: 'Please enter a username and password.' });
+    return;
+  }
+  users.findOne({ username: req.body.username }, function(err, user) {
+    if (!err && !!user && !!user.hash) {
+      bcrypt.compare(req.body.password, user.hash, function(err, match) {
+        if (match) {
+          req.session.username = req.body.username;
+          res.send({ user: user });
+        } else {
+          res.send({ err: 'Password is incorrect.' });
+        }
+      });
+    } else {
+      res.send({ err: 'Username does not exist.' });
+    }
+  });
+
+});
+
+app.post('/register', function(req, res) {
+  if (!req.body.username || !req.body.password) {
+    res.send({ err: 'Please enter a username and password.' });
+    return;
+  }
+  users.findOne({ username: req.body.username }, function(err, user) {
+    if (!res) {
+      bcrypt.genSalt(10, function(err, salt) {
+        bcrypt.hash(req.body.password, salt, function(err, hash) {
+          // Save new user to database.
+          users.insert({
+            username: req.body.username,
+            hash: hash,
+            happiness: 0,
+            count: 0
+          }, {}, function(err, result) {
+            if (err) {
+              res.send({ err: 'Username is taken.' });
+            } else {
+              req.session.username = req.body.username;
+              res.send({ result: result });
+            }
+          });
+        });
+      });
+    } else {
+      res.send({ err: 'Username is taken.' });
+    }
+  });
+});
+
+// Saves a happiness.
+app.post('/happy', function(req, res) {
+  happies.insert({
+    username: req.session.username,
+    date: new Date(),
+    message: req.body.message
+  }, function(err, result) {
+    if (!err) {
+      users.update({ username: req.session.username },
+        { $inc: { happiness: 1 } },
+        {},
+        function(err) {
+          res.send({ result: result });
+        }
+      );
+    } else {
+      res.send({ err: 'Whoops, try again later.' });
+    }
+  });
+});
+
+// Saves user email, sms, twitter settings, errors if already used.
+app.post('/save', function(req, res) {
+  // TODO: check to see what changed.
+  users.update({ username: req.session.username },
+    { $set: {
+              email: req.body.email,
+              ignore: req.body.ignore,
+              twitter: req.body.twitter,
+              sms: req.body.sms }
+    },
+    {},
+    function(err) {
+      if (!err) {
+        res.send({ result: 'Details successfully saved.' });
+      } else {
+        res.send({ err: err });
+      }
+    }
+  );
+});
+
+// Sends a lost password email.
+app.post('/lost', function(req, res) {
+  if (!!req.body.email) {
+    users.findOne({ email: req.body.email }, function(err, user) {
+      if (!err && !!user) {
+        var random = randomId();
+        while (!!lostUsers[random]) {
+          random = randomId();
+        }
+
+        var randomUrl = 'http://happinessjar.com/reset/' + random;
+        var msg = {
+          text:    'Hi, ' + user.username + '. Please visit ' + randomURL + ' to change your password to something that\'s easy to remember.',
+          from:    'Happiness Jar <thehappinessjar@gmail.com>',
+          to:      user.email,
+          subject: '[Happiness Jar] Reset your password.',
+        };
+
+        mailer.send(msg, function(err, message) {
+          if (err) {
+            res.send({ error: 'Message could not be sent.' });
+          } else {
+            lostUsers[random] = res.username;
+            res.send({ info: 'A password reset link has been sent to your email.' });
+          }
+        });
+      } else {
+        res.send({ error: 'Email does not belong to an account.' });
+      }
+    });
+  } else {
+    res.send({ error: 'Please enter an email.' });
+  }
 });
 
 // Handle a new text message.
