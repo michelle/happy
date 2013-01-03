@@ -8,6 +8,9 @@ var db = mongo.db('mongodb://localhost:27017/happy');
 
 var bcrypt = require('bcrypt');
 
+// Default happiness color.
+var DEFAULT_COLOR = '#dcc2e2';
+
 /**
  * User: {
  *  username: unique,
@@ -37,10 +40,13 @@ function sessionId() {
 /** Provides session id to save to clientside. */
 function login(username, cb) {
   var id = sessionId();
-  users.update({ username: username },
-      { $push: { sessions: id } },
-      {},
-      function() { cb(id); });
+  users.findAndModify({ username: username },
+    {},
+    { $push: { sessions: id } },
+    function(err, entry) {
+      var color = entry.color || DEFAULT_COLOR;
+      cb(id, color);
+    });
 };
 
 
@@ -48,6 +54,12 @@ function login(username, cb) {
 io.sockets.on('connection', function(socket) {
   // Sends to the client side number of happinesses, email & sms & color options.
   socket.on('init', function(data) {
+    users.findOne({ username: data.username }, function(err, user) {
+      // Confirm session ID.
+      if (user.sessions.indexOf(data.session) != -1) {
+        socket.emit('init', { count: user.happiness.length });
+      }
+    });
   });
 
   // Triggered when the client closes the window; saves their color choice.
@@ -65,12 +77,31 @@ io.sockets.on('connection', function(socket) {
 
   // Removes session ID from user on logout.
   socket.on('logout', function(data) {
-
+    users.update({ username: data.username },
+      { $pull: { sessions: data.sessions }},
+      {},
+      function(err) {
+        if (!err) {
+          socket.emit('logout');
+        } else {
+          console.log('+ logout', err);
+        }
+      });
   });
 
   // Saves user email, sms, twitter settings, errors if already used.
   socket.on('save', function(data) {
-
+    // TODO: check to see what changed.
+    users.update({ username: data.username },
+      { $set: { email: data.email, twitter: data.twitter, sms: data.sms }},
+      {},
+      function(err) {
+        if (!err) {
+          socket.emit('saved');
+        } else {
+          console.log('+ save', err);
+        }
+      });
   });
 
   // Registers/logs in a user, saves session ID, errors if already taken username.
@@ -86,8 +117,8 @@ io.sockets.on('connection', function(socket) {
         if (!err && !!res && !!res.hash) {
           bcrypt.compare(data.password, res.hash, function(err, match) {
             if (match) {
-              login(data.username, function(session) {
-                socket.emit('session', { id: session });
+              login(data.username, function(session, color) {
+                socket.emit('session', { id: session, color: color });
               });
             } else {
               socket.emit('login-error', { err: 'Username and password do not match.' });
@@ -106,10 +137,11 @@ io.sockets.on('connection', function(socket) {
                 username: data.username,
                 hash: hash,
                 happiness: [],
-                sessions: []
+                sessions: [],
+                count: 0
               }, {}, function() {
-                login(data.username, function(session) {
-                  socket.emit('session', { id: session });
+                login(data.username, function(session, color) {
+                  socket.emit('session', { id: session, color: color });
                 });
               });
             });
@@ -124,7 +156,16 @@ io.sockets.on('connection', function(socket) {
 
   // Saves a happiness.
   socket.on('happy', function(data) {
-    
+    users.update({ username: data.username },
+      { $push: { happiness: { date: new Date(), message: data.happiness } } },
+      {},
+      function(err) {
+        if (!err) {
+          socket.emit('happiness');
+        } else {
+          console.log('+ happy', err);
+        }
+      });
   });
 });
 
