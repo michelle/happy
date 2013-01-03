@@ -72,7 +72,21 @@ io.sockets.on('connection', function(socket) {
 
   // Retrieves a random happiness for the user, else return generic.
   socket.on('random_happy', function(data) {
-    // retrieve a random happiness.
+    users.findOne({ username: data.username }, function(err, user) {
+      // TODO: error handling?
+      // Confirm session ID.
+      if (user.sessions.indexOf(data.session) != -1 && user.happiness.length > 0) {
+        var happiness = user.happiness[Math.floor(Math.random() * user.happiness.length)];
+        socket.emit('random_happy', { happiness: happiness });
+      } else {
+        // TODO: insert a generic user.
+        users.findOne({ username: 'generic' }, function(err, generic) {
+          if (!err) {
+            var happiness = generic.happiness[Math.floor(Math.random() * generic.happiness.length)];
+            socket.emit('random_happy', { happiness: happiness });
+          }
+        });
+      });
   });
 
   // Removes session ID from user on logout.
@@ -167,6 +181,11 @@ io.sockets.on('connection', function(socket) {
         }
       });
   });
+
+  // TODO: Sends a lost password email.
+  socket.on('lost', function(data) {
+
+  });
 });
 
 
@@ -180,9 +199,25 @@ app.set('views', __dirname + '/views');
 
 
 
-app.get('/', function(req, res){
+app.get('/', function(req, res) {
   res.render('index');
 });
 
+// Password reset page.
+app.get('/lost', function(req, res) {
+  res.render('lost');
+});
+
+// Save new password, redirect to index.
+app.post('/lost', function(req, res) {
+
+});
+
+// Handle a new text message.
+// Query users for that phone number. If ':(', send back a random happiness.
+// Otherwise, store it.
+app.post('/new_text', function(req, res) {
+
+});
 
 app.listen(8008);
