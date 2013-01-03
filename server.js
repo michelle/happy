@@ -8,6 +8,16 @@ var db = mongo.db('mongodb://localhost:27017/happy');
 
 var bcrypt = require('bcrypt');
 
+var email = require('emailjs');
+var mailer = email.server.connect({
+  user: 'thehappinessjar@gmail.com',
+  password: process.argv[2] || 'password',
+  host: 'smtp.gmail.com',
+  ssl: true
+});
+// Temporary lost password links.
+var lostUsers = {};
+
 // Default happiness color.
 var DEFAULT_COLOR = '#dcc2e2';
 
@@ -20,12 +30,13 @@ var DEFAULT_COLOR = '#dcc2e2';
  *  twitter: optional, unique,
  *  color: optional, default=purple,
  *  sessions: [hashes],
- *  happy: [happinesses]
+ *  ignore: default=false, optional, -- don't send emails if true.
+ *  happiness: [happinesses]
  * },
  * generic, used to store random happinesses: {
  *  username: generic,
  *  password: None,
- *  happy: [happinesses]
+ *  happiness: [happinesses]
  * }
  */
 var users = db.collection('users');
@@ -184,7 +195,38 @@ io.sockets.on('connection', function(socket) {
 
   // TODO: Sends a lost password email.
   socket.on('lost', function(data) {
+    if (data.email) {
+      users.findOne({ email: data.email }, function(err, res) {
+        if (!err && !!res) {
+          var random = sessionId();
+          while (!!lostUsers[random]) {
+            random = sessionId();
+          }
 
+          var randomUrl = 'http://happinessjar.com/reset/' + random;
+          var msg = {
+            text:    'Hi, ' + res.username + '. Please visit ' + randomURL + ' to change your password to something that\'s easy to remember.',
+            from:    'Happiness Jar <thehappinessjar@gmail.com>',
+            to:      res.email,
+            subject: '[Happiness Jar] Reset your password.',
+          };
+
+          mailer.send(msg, function(err, message) {
+            if (err) {
+              socket.emit('error', 'Message could not be sent.');
+            } else {
+              lost.push(random);
+              lostUsers[random] = res.username;
+              socket.emit('info', 'A password reset link has been sent to your email.');
+            }
+          });
+        } else {
+          socket.emit('error', 'Email does not belong to an account.');
+        }
+      });
+    } else {
+      socket.emit('error', 'Please enter an email.');
+    }
   });
 });
 
@@ -197,19 +239,28 @@ app.use(express.static(__dirname + '/public'));
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
 
-
-
 app.get('/', function(req, res) {
   res.render('index');
 });
 
 // Password reset page.
-app.get('/lost', function(req, res) {
-  res.render('lost');
+app.get('/reset/:key', function(req, res) {
+  var key = req.params.key;
+  if (!!lostUsers[key]) {
+    res.render('reset', { user: lostUsers[key] });
+  } else {
+    res.redirect('/');
+  }
 });
 
 // Save new password, redirect to index.
-app.post('/lost', function(req, res) {
+app.post('/reset/:key', function(req, res) {
+  var key = req.params.key;
+  if (!!lostUsers[key] && lostUsers[key] == req.body.username) {
+    // TODO: Reset password of associated user.
+  } else {
+    res.redirect('/');
+  }
 
 });
 
