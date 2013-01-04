@@ -164,6 +164,10 @@ app.post('/register', function(req, res) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
           // Save new user to database.
           users.insert({
+            twitter: '',
+            email: '',
+            sms: '',
+            ignore: false,
             color: '',
             username: req.body.username,
             hash: hash,
@@ -266,7 +270,26 @@ app.post('/lost', function(req, res) {
 // Query users for that phone number. If ':(', send back a random happiness.
 // Otherwise, store it.
 app.post('/new_text', function(req, res) {
-
+  var sms = req.body;
+  if (!!sms && !!sms.text && !!sms.number) {
+    users.findOne({ sms: sms.number }, function(err, user) {
+      if (!!user && !!user.username) {
+        happies.insert({
+          username: user.username,
+          date: new Date(),
+          message: sms.text
+        }, function(err, result) {
+          if (!err) {
+            users.update({ username: user.username },
+              { $inc: { happiness: 1 } },
+              {},
+              function(err) {}
+            );
+          }
+        });
+      }
+    });
+  }
 });
 
 app.listen(8008);
