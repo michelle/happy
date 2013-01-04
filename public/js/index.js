@@ -28,6 +28,7 @@ $(document).ready(function() {
   var active = 'login';
   var selected_color = '#ec8585';
   var current_color_selector = 'fred';
+  var logged_in = false;
 
   // Resets the settings handler.
   function rebindSettings() {
@@ -35,6 +36,7 @@ $(document).ready(function() {
       sendSettings(function() {
         $('#settings').fadeOut();
       });
+      return false;
     });
   };
 
@@ -55,6 +57,7 @@ $(document).ready(function() {
 
   // Update UI for login.
   function loginUI(user) {
+    logged_in = true;
     $('#login').stop().fadeOut(function() {
       $('.login-errors').hide();
       var color = user.color || '#ec8585'
@@ -74,6 +77,7 @@ $(document).ready(function() {
 
   // Update UI for logout.
   function logoutUI() {
+    logged_in = false;
     $('#panel').stop().fadeOut(function() {
       $('#username').stop().fadeOut(function() {
         $('#title').animate({ 'width': 190 });
@@ -125,6 +129,7 @@ $(document).ready(function() {
                 loginUI(res.user);
                 rebindSettings();
               });
+              return false;
             });
           });
         } else {
@@ -161,5 +166,18 @@ $(document).ready(function() {
   });
 
 
+  /** Add a happy! */
+  $('#add').click(function() {
+    if (!logged_in) {
+      $('.warn').text('You\'re not logged in, so any happinesses you save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
+      $('.warn').slideDown();
+    }
+    $('#addbubble').fadeIn();
+  });
+
+  $('#form_happy').submit(function() {
+    // TODO: get info and $.post!
+    return false;
+  });
 
 });

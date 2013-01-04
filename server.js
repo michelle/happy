@@ -187,7 +187,7 @@ app.post('/register', function(req, res) {
 // Saves a happiness.
 app.post('/happy', function(req, res) {
   happies.insert({
-    username: req.session.username,
+    username: req.session.username || '',
     date: new Date(),
     message: req.body.message
   }, function(err, result) {
