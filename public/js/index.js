@@ -103,17 +103,17 @@ $(document).ready(function() {
   });
 
   // Toggle login form.
-  $('#content').on('click', '#select_login', function() {
+  $('#select_login').click(function() {
     active = 'login';
     $('.active').removeClass();
-    $('#select_login').addClass('active');
-    $('#select_login').addClass(current_color_selector);
+    $(this).addClass('active');
+    $(this).addClass(current_color_selector);
   });
-  $('#content').on('click', '#select_register', function() {
+  $('#select_register').click(function() {
     active = 'register';
     $('.active').removeClass();
-    $('#select_register').addClass('active');
-    $('#select_register').addClass(current_color_selector);
+    $(this).addClass('active');
+    $(this).addClass(current_color_selector);
   });
 
   $('#form_login').submit(function() {
