@@ -19,9 +19,6 @@ body, html {
 #panel {
   display: none;
 }
-.bubble {
-  display: none;
-}
 .bubble:hover {
   cursor: pointer;
 }
@@ -46,10 +43,10 @@ body, html {
 #login {
   position: absolute;
   right: 0px;
-  top: 90px;
+  top: 32px;
   background-color: #4e4e4e;
   border-radius: 20px 0 0 20px;
-  padding: 0 0 12px 0px;
+  padding: 0 0 10px 0px;
   width: 275px;
 
 }
@@ -68,7 +65,6 @@ body, html {
 
 #login .active, #login .active:hover {
   cursor: default;
-  color: #ec8585;
 }
 
 /** TODO: CHANGE INPUT FONTS */
@@ -88,7 +84,7 @@ body, html {
 
 #login input:focus {
   outline: none;
-  background-color: #c5ecec;
+  background-color: #c5ecec !important;
 }
 
 #login #submit {
@@ -98,7 +94,7 @@ body, html {
   background-color: #828282;
   cursor: pointer;
   margin: 0 auto;
-  margin-top: 10px;
+  margin-top: 5px;
   border-radius: 50px;
 }
 
@@ -149,13 +145,112 @@ body, html {
   user-select: none;
 }
 
+/* Colors! */
+#footer {
+  position: fixed;
+  bottom: 0px;
+  height: 40px;
+  width: 100%;
+  z-index: 100;
+  background-color: #404040;
+}
+#footercontainer {
+  line-height: 40px;
+  color: #6d6d6d;
+  margin: 0 50px;
+}
+
+#tagline a {
+  color: #6d6d6d;
+  margin: 5px;
+  display: inline-block;
+}
+
+#colors, #tagline {
+  float: left;
+}
+
+#colors {
+  margin-right: 20px;
+}
+
+.color {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  margin: 10px 0px;
+  float: left;
+}
+
+.color:hover {
+  cursor: pointer;
+  margin-top: 7px;
+}
+
+#colors .selected, #colors .selected:hover {
+  cursor: default;
+  border-bottom: 10px solid #828282;
+  margin-top: 0px;
+}
+
+.red {
+  background-color: #ec8585;
+}
+.fred, .fred:hover {
+  color: #ec8585 !important;
+}
+
+.orange {
+  background-color: #ffb676;
+
+}
+.forange, .forange:hover {
+  color: #ffb676 !important;
+}
+
+.yellow {
+  background-color: #ffee8e;
+}
+.fyellow, .fyellow:hover {
+  color: #ffee8e !important;
+}
+
+.green {
+  background-color: #b3d79d;
+}
+.fgreen, .fgreen:hover {
+  color: #b3d79d !important;
+}
+
+.blue {
+  background-color: #82d0e7;
+}
+.fblue, .fblue:hover {
+  color: #82d0e7 !important;
+}
+
+.violet {
+  background-color: #b08bc7;
+}
+.fviolet, .fviolet:hover {
+  color: #b08bc7 !important;
+}
+
+.white {
+  background-color: #eff7f7;
+}
+.fwhite, .fwhite:hover {
+  color: #eff7f7 !important;
+}
+
+
 /* Artsy stuff */
 #moving, #add, #background, #jar, #liquid, #outline {
   position: absolute;
 }
 
 #add {
-  top: -47px;
+  top: -46px;
   width: 74px;
   left: 241px;
 }
@@ -176,6 +271,13 @@ body, html {
   background-color: #c5ecec;
   height: 500px;
   width: 500px;
+}
+
+#push {
+  height: 40px;
+  position: absolute;
+  top: 610px;
+  width: 100%;
 }
 
 #moving {
@@ -206,6 +308,7 @@ body, html {
   background-size: contain;
   background-position: top;
   background-repeat: no-repeat;
+  pointer-events: none;
 }
 
 
@@ -218,9 +321,9 @@ body, html {
 #content {
   position: relative;
   width: 334px;
-  height: 500px;
+  height: 450px;
   margin: 0 auto;
-  top: 0px;
+  top: 50px;
 }
 
 #outline {

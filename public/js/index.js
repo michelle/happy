@@ -1,5 +1,15 @@
 $(document).ready(function() {
 
+  var bgColoredSelectors = [
+    $('#login input'),
+    $('.login-errors')
+  ];
+
+  var fgColoredSelectors = [
+    $('#login label'),
+    $('#username')
+  ];
+
   if (!!user) {
     loginUI(user);
   }
@@ -16,6 +26,8 @@ $(document).ready(function() {
   // For sad note, bubble popup.
 
   var active = 'login';
+  var selected_color = '#ec8585';
+  var current_color_selector = 'fred';
 
   // Resets the settings handler.
   function rebindSettings() {
@@ -47,9 +59,7 @@ $(document).ready(function() {
       $('.login-errors').hide();
       var color = user.color || '#ec8585'
       $('#liquid').stop().animate({ 'backgroundColor': color }, function() {
-        $('#moving').stop().animate({ 'height': Math.min(100, 18 + user.happiness) + '%' }, function() {
-          $('.bubble').stop().fadeIn();
-        });
+        $('#moving').stop().animate({ 'height': Math.min(100, 18 + user.happiness) + '%' });
       });
       $('#username').text(user.username + '\'s');
       $('#title').animate({ 'width': 210 + $('#username').width() + 'px' }, function() {
@@ -68,11 +78,9 @@ $(document).ready(function() {
       $('#username').stop().fadeOut(function() {
         $('#title').animate({ 'width': 190 });
       });
-      $('.bubble').stop().fadeOut(function() {
-        $('#liquid').stop().animate({ 'backgroundColor': '#ec8585' }, function() {
-          $('#moving').stop().animate({ 'height': '90%' }, function() {
-            $('#login').stop().fadeIn();
-          });
+      $('#liquid').stop().animate({ 'backgroundColor': '#ec8585' }, function() {
+        $('#moving').stop().animate({ 'height': '90%' }, function() {
+          $('#login').stop().fadeIn();
         });
       });
     });
@@ -91,13 +99,15 @@ $(document).ready(function() {
   // Toggle login form.
   $('#content').on('click', '#select_login', function() {
     active = 'login';
-    $('.active').removeClass('active');
+    $('.active').removeClass();
     $('#select_login').addClass('active');
+    $('#select_login').addClass(current_color_selector);
   });
   $('#content').on('click', '#select_register', function() {
     active = 'register';
-    $('.active').removeClass('active');
+    $('.active').removeClass();
     $('#select_register').addClass('active');
+    $('#select_register').addClass(current_color_selector);
   });
 
   $('#form_login').submit(function() {
@@ -131,7 +141,25 @@ $(document).ready(function() {
 
   /** Change color of happiness. */
   $('.color').click(function() {
-    
+    $('.selected').removeClass('selected');
+    $(this).addClass('selected');
+    if (selected_color != $(this).css('backgroundColor')) {
+      selected_color = $(this).css('backgroundColor');
+      current_color_selector = 'f' + $(this).attr('id');
+      var lr = $('.active');
+      lr.removeClass();
+      lr.addClass('active');
+      lr.addClass(current_color_selector);
+      $('#liquid').stop().animate({ 'backgroundColor': selected_color });
+      for (var i = 0; i < bgColoredSelectors.length; i += 1) {
+        bgColoredSelectors[i].css({ 'backgroundColor': selected_color });
+      }
+      for (var i = 0; i < fgColoredSelectors.length; i += 1) {
+        fgColoredSelectors[i].css({ 'color': selected_color });
+      }
+    }
   });
+
+
 
 });
