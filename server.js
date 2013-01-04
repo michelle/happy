@@ -109,6 +109,7 @@ app.get('/logout', function(req, res) {
 
 // Retrieves a random happiness for the user, else return generic.
 app.get('/random_happy', function(req, res) {
+  console.log('wat');
   happies.find({ username: req.session.username }).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {

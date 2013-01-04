@@ -181,9 +181,17 @@ $(document).ready(function() {
 
   /** Get a random happiness */
   $('#sad').click(function() {
+    var el = $('#bubble');
+    var newone = el.clone(true);
+    el.before(newone);
+    $("." + el.attr("class") + ":last").remove();
     $.get('/random_happy', function(res) {
       console.log(req.happiness);
     });
+  });
+
+  /** Add happiness online */
+  $('#add').click(function() {
   });
 
   /** Save color before exiting */

@@ -357,6 +357,26 @@ body, html {
   }
 }*/
 
+.short {
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -ms-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 2s;
+  -moz-animation-duration: 2s;
+  -ms-animation-duration: 2s;
+  -o-animation-duration: 2s;
+  animation-duration: 2s;
+}
+
+#bubble {
+  left: 110px;
+  background-color: #c5ecec;
+  border-radius: 20px;
+  position: absolute;
+}
+
 .animated {
   -webkit-animation-fill-mode: both;
   -moz-animation-fill-mode: both;
@@ -372,6 +392,11 @@ body, html {
   -moz-animation-iteration-count: infinite;
   -o-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes up {
+  0%{ width: 0px; height: 0px; bottom: 50px; }
+  100% { width: 40px; height: 40px; bottom: 100%; }
 }
 
 @-webkit-keyframes shake {
@@ -391,9 +416,17 @@ body, html {
   50% { left: 20px; }
 }
 
+
 .shake {
   -webkit-animation-name: shake;
   -moz-animation-name: shake;
   -o-animation-name: shake;
   animation-name: shake;
+}
+
+.up {
+  -webkit-animation-name: up;
+  -moz-animation-name: up;
+  -o-animation-name: up;
+  animation-name: up;
 }
