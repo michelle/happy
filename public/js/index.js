@@ -82,6 +82,7 @@ $(document).ready(function() {
   // Update UI for logout.
   function logoutUI() {
     logged_in = false;
+    $('#settings').stop().fadeOut();
     $('#panel').stop().fadeOut(function() {
       $('#username').stop().fadeOut(function() {
         $('#title').animate({ 'width': 190 });
