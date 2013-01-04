@@ -96,7 +96,7 @@ app.post('/reset/:key', function(req, res) {
 // Triggered when the client closes the window; saves their color choice.
 app.post('/leave', function(req, res) {
   if (req.session.username) {
-    users.update({ username: req.session.username, color: req.body.color }, {}, function() {});
+    users.update({ username: req.session.username }, { $set: { color: req.body.color } }, {}, function() {});
   }
   // Shouldn't be called without a username.
 });
@@ -164,6 +164,7 @@ app.post('/register', function(req, res) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
           // Save new user to database.
           users.insert({
+            color: '',
             username: req.body.username,
             hash: hash,
             happiness: 0,

@@ -1,4 +1,8 @@
 $(document).ready(function() {
+  var active = 'login';
+  var selected_color = '#ec8585';
+  var current_color_selector = 'fred';
+  var logged_in = false;
 
   var bgColoredSelectors = [
     $('#login input'),
@@ -11,6 +15,7 @@ $(document).ready(function() {
   ];
 
   if (!!user) {
+    console.log(user);
     loginUI(user);
   }
   /**
@@ -25,10 +30,6 @@ $(document).ready(function() {
    */
   // For sad note, bubble popup.
 
-  var active = 'login';
-  var selected_color = '#ec8585';
-  var current_color_selector = 'fred';
-  var logged_in = false;
 
   // Resets the settings handler.
   function rebindSettings() {
@@ -61,6 +62,7 @@ $(document).ready(function() {
     $('#login').stop().fadeOut(function() {
       $('.login-errors').hide();
       var color = user.color || '#ec8585'
+      $('#username').css({ 'color': color });
       $('#liquid').stop().animate({ 'backgroundColor': color }, function() {
         $('#moving').stop().animate({ 'height': Math.min(100, 18 + user.happiness) + '%' });
       });
@@ -179,5 +181,12 @@ $(document).ready(function() {
     // TODO: get info and $.post!
     return false;
   });
+
+  /** Save color before exiting */
+  window.onbeforeunload = function() {
+    if (logged_in) {
+      $.post('/leave', { color: selected_color });
+    }
+  };
 
 });

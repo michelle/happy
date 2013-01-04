@@ -25,6 +25,9 @@ body, html {
 
 /* Control panel stylings */
 #panel {
+  position: relative;
+  width: 300px;
+  margin: 0 auto;
 }
 
 
@@ -42,8 +45,9 @@ body, html {
 
 #login {
   position: absolute;
-  right: 0px;
-  top: 32px;
+  right: 83px;
+  margin: 0 auto;
+  top: 102px;
   background-color: #4e4e4e;
   border-radius: 20px 0 0 20px;
   padding: 0 0 10px 0px;
@@ -316,14 +320,6 @@ body, html {
 
 
 #wrapper img {
-}
-
-#content {
-  position: relative;
-  width: 334px;
-  height: 450px;
-  margin: 0 auto;
-  top: 50px;
 }
 
 #outline {
