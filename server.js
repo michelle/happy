@@ -275,7 +275,6 @@ app.post('/lost', function(req, res) {
 // Otherwise, store it.
 app.post('/new_text', function(req, res) {
   var sms = req.body;
-  console.log(sms);
   if (!!sms && !!sms.text && !!sms.number) {
     users.findOne({ sms: sms.number }, function(err, user) {
       if (!!user && !!user.username) {
