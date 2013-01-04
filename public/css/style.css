@@ -2,3 +2,299 @@ html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,pre,code,form,fields
 a {outline: none;} /* Gets rid of Firefox's dotted borders */
 a img {border: none;} /* Gets rid of IE's blue borders */
 
+
+body, html {
+  background-color: #4e4e4e;
+  font-family: 'airplane', Helvetica, Arial;
+  color: #4e4e4e;
+}
+
+#wrapper {
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  width: 500px;
+}
+
+#panel {
+  display: none;
+}
+.bubble {
+  display: none;
+}
+.bubble:hover {
+  cursor: pointer;
+}
+
+/* Control panel stylings */
+#panel {
+}
+
+
+/* Login form stylings */
+.login-errors {
+  background-color: #ec8585;
+  border-radius: 0px 0px 15px 15px;
+  display: none;
+  color: #4e4e4e;
+  width: 70%;
+  padding: 10px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+#login {
+  position: absolute;
+  right: 0px;
+  top: 90px;
+  background-color: #4e4e4e;
+  border-radius: 20px 0 0 20px;
+  padding: 0 0 12px 0px;
+  width: 275px;
+
+}
+#login button {
+  cursor: pointer;
+  margin: 20px 40px 5px 40px;
+  border: none;
+  background-color: transparent;
+  font-size: 25px;
+  color: #828282;
+}
+
+#login button:hover {
+  color: #6b6b6b;
+}
+
+#login .active, #login .active:hover {
+  cursor: default;
+  color: #ec8585;
+}
+
+/** TODO: CHANGE INPUT FONTS */
+#login input {
+  width: 80%;
+  display: block;
+  margin: 2px 0px;
+  border-radius: 10px 0 0 10px;
+  padding: 15px;
+  font-size: 22px;
+  border: none;
+  float: right;
+  background-color: #ec8585;
+  color: #4e4e4e;
+}
+
+
+#login input:focus {
+  outline: none;
+  background-color: #c5ecec;
+}
+
+#login #submit {
+  width: 50px;
+  font-size: 14px;
+  float: none;
+  background-color: #828282;
+  cursor: pointer;
+  margin: 0 auto;
+  margin-top: 10px;
+  border-radius: 50px;
+}
+
+#login #submit:hover {
+  background-color: #6b6b6b;
+}
+
+.clear {
+  clear: both;
+}
+
+#login label {
+  color: #ec8585;
+  float: right;
+  width: 90%;
+  font-size: 14px;
+  margin-top: 8px;
+}
+
+/* Titles */
+#title {
+  position: relative;
+  z-index: 100;
+  font-size: 40px;
+  padding-top: 50px;
+  width: 190px;
+  margin: 0 auto;
+  line-height: 50px;
+}
+
+#username {
+  display: none;
+  float: left;
+  color: #ec8585;
+}
+
+#hj {
+  float: right;
+
+}
+
+#outline, #title, #moving, #background {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+/* Artsy stuff */
+#moving, #add, #background, #jar, #liquid, #outline {
+  position: absolute;
+}
+
+#add {
+  top: -47px;
+  width: 74px;
+  left: 241px;
+}
+
+#background {
+  background-color: #c5ecec;
+  width: 100%;
+  top: 0;
+  height: 130px;
+  z-index: 0;
+}
+
+#jar, #outline {
+  top: 130px;
+}
+
+#jar {
+  background-color: #c5ecec;
+  height: 500px;
+  width: 500px;
+}
+
+#moving {
+  bottom: 0px;
+  width: 450px;
+  height: 90%;
+  /*
+  animation-name: liquid;
+  -webkit-animation-name: liquid;
+  -moz-animation-name: liquid;
+  -o-animation-name: liquid;
+  animation-duration: 2s;
+  -webkit-animation-duration: 2s;
+  -moz-animation-duration: 2s;
+  -o-animation-duration: 2s;
+  animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  -o-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  */
+}
+
+#liquid {
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  background: #ec8585 url('/images/liquidbg.png');
+  background-size: contain;
+  background-position: top;
+  background-repeat: no-repeat;
+}
+
+
+
+
+
+#wrapper img {
+}
+
+#content {
+  position: relative;
+  width: 334px;
+  height: 500px;
+  margin: 0 auto;
+  top: 0px;
+}
+
+#outline {
+  background: url('/images/jar.png');
+  background-size: contain;
+  width: 500px;
+  height: 500px;
+  background-repeat :no-repeat;
+  pointer-events: none;
+}
+#outline img {
+  width: 500px;
+}
+
+/* Animation
+@-webkit-keyframes liquid {
+  0% {
+    left: 20px;
+    bottom: 0px;
+  }
+
+  25% {
+    left: 23px;
+    bottom: -3px;
+  }
+   
+  50% {
+    left: 26px;
+    bottom: 0px;
+  }
+
+  100% {
+    left: 30px;
+    bottom: -3px;
+  }
+}*/
+
+.animated {
+  -webkit-animation-fill-mode: both;
+  -moz-animation-fill-mode: both;
+  -ms-animation-fill-mode: both;
+  -o-animation-fill-mode: both;
+  animation-fill-mode: both;
+  -webkit-animation-duration: 2s;
+  -moz-animation-duration: 2s;
+  -ms-animation-duration: 2s;
+  -o-animation-duration: 2s;
+  animation-duration: 2s;
+  -webkit-animation-iteration-count: infinite;
+  -moz-animation-iteration-count: infinite;
+  -o-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes shake {
+  0%, 100% { left: 10px; }
+  50% { left: 20px; }
+}
+@-moz-keyframes shake {
+  0%, 100% { left: 10px; }
+  50% { left: 20px; }
+}
+@-o-keyframes shake {
+  0%, 100% { left: 10px; }
+  50% { left: 20px; }
+}
+@keyframes shake {
+  0%, 100% { left: 10px; }
+  50% { left: 20px; }
+}
+
+.shake {
+  -webkit-animation-name: shake;
+  -moz-animation-name: shake;
+  -o-animation-name: shake;
+  animation-name: shake;
+}

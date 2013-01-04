@@ -17,8 +17,6 @@ var mailer = email.server.connect({
 // Temporary lost password links.
 var lostUsers = {};
 
-// Default happiness color.
-var DEFAULT_COLOR = '#dcc2e2';
 
 /**
  * User: {
@@ -71,7 +69,7 @@ app.get('/', function(req, res) {
       }
     });
   } else {
-    res.render('index');
+    res.render('index', { user: '' });
   }
 });
 
@@ -161,7 +159,7 @@ app.post('/register', function(req, res) {
     return;
   }
   users.findOne({ username: req.body.username }, function(err, user) {
-    if (!res) {
+    if (!user) {
       bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
           // Save new user to database.
@@ -175,7 +173,7 @@ app.post('/register', function(req, res) {
               res.send({ err: 'Username is taken.' });
             } else {
               req.session.username = req.body.username;
-              res.send({ result: result });
+              res.send({ user: result });
             }
           });
         });

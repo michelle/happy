@@ -1,1 +1,35 @@
+<script>
+<% if (!!user) { %>
+  var user = <%-user%>;
+<% } else { %>
+  var user = null;
+<% } %>
+</script>
+<div id="background"></div>
+<div id="wrapper">
+
+  <div id="jar">
+    <div id="moving" class="animated shake">
+      <div id="liquid"></div>
+      <img src="/images/add.png" id="add" class="bubble">
+    </div>
+    <img src="/images/sad.png" id="sad" class="bubble">
+    <div id="content">
+      <%- partial('partials/panel') %>
+      <%- partial('partials/login') %>
+    </div>
+  </div>
+
+
+  <div id="outline">
+  <!--img src="/images/jar.png"-->
+  </div>
+
+
+
+</div>
+  <div id="title">
+    <div id="username"><% if (!!user) { %><%=user.username%><% } %></div>
+    <div id="hj">happiness jar</div>
+  </div>
 
