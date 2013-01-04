@@ -124,13 +124,9 @@ $(document).ready(function() {
       password: $('#password_field').val()
     }, function(res) {
       if (res.user) {
+        loginUI(res.user);
         if (active == 'register') {
-          $('#login').stop().fadeOut(function() {
-            loginUI(res.user);
-            $('#settings').stop().fadeIn();
-          });
-        } else {
-          loginUI(res.user);
+          $('#settings').stop().fadeIn();
         }
       } else {
         $('.login-errors').text(res.err);

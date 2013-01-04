@@ -213,12 +213,16 @@ app.post('/happy', function(req, res) {
 // Saves user email, sms, twitter settings, errors if already used.
 app.post('/save', function(req, res) {
   // TODO: check to see what changed.
+  var sms = req.body.sms;
+  if (!!sms) {
+    sms = sms.replace(/\D/g,"");
+  }
   users.update({ username: req.session.username },
     { $set: {
               email: req.body.email,
               ignore: req.body.ignore,
               twitter: req.body.twitter,
-              sms: req.body.sms }
+              sms: sms }
     },
     {},
     function(err) {
@@ -271,6 +275,7 @@ app.post('/lost', function(req, res) {
 // Otherwise, store it.
 app.post('/new_text', function(req, res) {
   var sms = req.body;
+  console.log(sms);
   if (!!sms && !!sms.text && !!sms.number) {
     users.findOne({ sms: sms.number }, function(err, user) {
       if (!!user && !!user.username) {
