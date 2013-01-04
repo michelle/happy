@@ -32,15 +32,18 @@ $(document).ready(function() {
 
 
   // Resets the settings handler.
-  function rebindSettings() {
-    $('#form_settings').submit(function() {
-      sendSettings(function() {
+  $('#form_settings').submit(function() {
+    sendSettings(function(res) {
+      if (!res.err) {
+        $('.info').text('Settings saved successfully.');
+        $('.info').fadeIn();
         $('#settings').fadeOut();
-        $('#panel').fadeIn();
-      });
-      return false;
+      } else {
+        $('.warn').text('Uh oh, try again later.');
+      }
     });
-  };
+    return false;
+  });
 
   // Send a new set of settings to the user.
   function sendSettings(cb) {
@@ -51,9 +54,7 @@ $(document).ready(function() {
       ignore: $('#ignore_field').val(),
       twitter: $('#twitter_field').val()
     }, function(res) {
-      if (!res.err) {
-        cb();
-      }
+      cb(res);
     });
   };
 
@@ -124,15 +125,9 @@ $(document).ready(function() {
     }, function(res) {
       if (res.user) {
         if (active == 'register') {
-          $('#login').fadeOut(function() {
-            $('#settings').fadeIn();
-            $('#form_settings').submit(function() {
-              sendSettings(function() {
-                loginUI(res.user);
-                rebindSettings();
-              });
-              return false;
-            });
+          $('#login').stop().fadeOut(function() {
+            loginUI(res.user);
+            $('#settings').stop().fadeIn();
           });
         } else {
           loginUI(res.user);
@@ -180,6 +175,11 @@ $(document).ready(function() {
   $('#form_happy').submit(function() {
     // TODO: get info and $.post!
     return false;
+  });
+
+  /** Open up settings */
+  $('#open_settings').click(function() {
+    $('#settings').fadeIn();
   });
 
   /** Save color before exiting */
