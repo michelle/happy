@@ -179,6 +179,13 @@ $(document).ready(function() {
     $('#settings').fadeIn();
   });
 
+  /** Get a random happiness */
+  $('#sad').click(function() {
+    $.get('/random_happy', function(res) {
+      console.log(req.happiness);
+    });
+  });
+
   /** Save color before exiting */
   window.onbeforeunload = function() {
     if (logged_in) {
