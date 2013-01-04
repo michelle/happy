@@ -36,6 +36,7 @@ $(document).ready(function() {
     $('#form_settings').submit(function() {
       sendSettings(function() {
         $('#settings').fadeOut();
+        $('#panel').fadeIn();
       });
       return false;
     });
@@ -84,15 +85,14 @@ $(document).ready(function() {
       $('#username').stop().fadeOut(function() {
         $('#title').animate({ 'width': 190 });
       });
-      $('#liquid').stop().animate({ 'backgroundColor': '#ec8585' }, function() {
-        $('#moving').stop().animate({ 'height': '90%' }, function() {
-          $('#login').stop().fadeIn();
-        });
+      $('#moving').stop().animate({ 'height': '90%' }, function() {
+        $('#login').stop().fadeIn();
       });
     });
   };
 
   function logout() {
+    $.post('/leave', { color: selected_color });
     $.get('/logout', function() {
       logoutUI();
     });

@@ -16,7 +16,7 @@ body, html {
   width: 500px;
 }
 
-#panel {
+#settings, #panel {
   display: none;
 }
 .bubble:hover {
