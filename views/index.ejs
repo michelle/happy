@@ -22,12 +22,39 @@
   <div id="outline">
   <!--img src="/images/jar.png"-->
   </div>
+
   <div id="push"></div>
 
 </div>
 <div id="title">
   <div id="username"><% if (!!user) { %><%=user.username%><% } %></div>
   <div id="hj">happiness jar</div>
+</div>
+<div id="instructions">
+<div id="instructionscontainer">
+<button id="show_instructions">What is this?</button>
+<div id="hidden_instructions">
+  <p>
+  Sometimes we get carried away with the big 'important' things in life and forget how
+  many happy minutes and seconds we have had.
+  </p>
+  <p>
+  <strong>This is your happiness jar.</strong> Use it to keep track of every bubble bath you
+  take, every puppy you pet. Use it to retrieve sweetness when you're a bit
+  sour.
+  </p>
+  <p>
+  Give us your <strong>phone number</strong> and we'll store every text you send us in your
+  jar. Give us your <strong>email address</strong> and at the end of the year happy memories will fill
+  your inbox.
+  </p>
+  <p>
+  And of course, a silly quote on the topic from Simon and Garfunkel:
+  <strong>"I've got nothing to do today but smile."</strong>
+  </p>
+  <button class="close">close</button>
+  </div>
+</div>
 </div>
 
 <div id="footer">
@@ -44,6 +71,7 @@
 <div id="tagline">
 <a href="mailto:michelle@michellebu.com">feedback</a>
 <a href="https://github.com/michellebu/happy">github</a>
+<a class="instructions">instructions</a>
 </div>
 </div>
 </div>

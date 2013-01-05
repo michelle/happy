@@ -424,12 +424,6 @@ body, html {
   width: 500px;
 }
 
-#push {
-  height: 40px;
-  position: absolute;
-  top: 610px;
-  width: 100%;
-}
 
 #moving {
   bottom: 0px;
@@ -589,3 +583,56 @@ body, html {
   -o-animation-name: up;
   animation-name: up;
 }
+
+
+/** Instructions */
+#push {
+  height: 40px;
+  position: absolute;
+  top: 628px;
+  width: 100%;
+}
+#instructions {
+  z-index: 100;
+  position: fixed;
+  bottom: 40px;
+  width: 300px;
+  height: 100%;
+  display: none;
+  background-color: #404040;
+  text-transform: lowercase;
+  line-height: 25px;
+  color: rgb(139,139,139);
+}
+
+#instructionscontainer {
+  position: absolute;
+  bottom: 0px;
+  padding: 20px;
+}
+
+#instructions button {
+  padding: 10px;
+  margin: 0px;
+  text-transform: lowercase;
+  border: 0;
+  color: #eff7f7;
+  background-color: transparent;
+}
+
+#instructions p {
+  text-align: justify;
+  margin-bottom: 10px;
+}
+
+#instructions strong {
+  font-weight: 300;
+  color: #eff7f7;
+}
+
+#footer .instructions, #instructions .close {
+  text-decoration: underline;
+  cursor: pointer;
+  color: #c95858;
+}
+

@@ -256,6 +256,14 @@ $(document).ready(function() {
     $(this).stop().fadeOut();
   });
 
+  /** instructions */
+  $('.instructions').click(function() {
+    $('#instructions').fadeToggle();
+  });
+  $('#instructions').on('click', '.close', function() {
+    $('#instructions').fadeOut();
+  });
+
   /** Save color before exiting */
   window.onbeforeunload = function() {
     if (logged_in) {
