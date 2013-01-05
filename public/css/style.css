@@ -96,7 +96,6 @@ body, html {
   text-transform: lowercase;
   cursor: pointer;
   color: #4e4e4e;
-  text-shadow: 0px 2px 0px rgba(256, 256, 256, 0.3);
 }
 
 #panel .submit:hover {
@@ -170,7 +169,7 @@ body, html {
 }
 #login button {
   cursor: pointer;
-  margin: 20px 40px 5px 40px;
+  margin: 20px 30px 5px 40px;
   border: none;
   background-color: transparent;
   font-size: 25px;

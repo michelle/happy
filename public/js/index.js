@@ -258,10 +258,10 @@ $(document).ready(function() {
 
   /** instructions */
   $('.instructions').click(function() {
-    $('#instructions').fadeToggle();
+    $('#instructions').stop().fadeToggle();
   });
   $('#instructions').on('click', '.close', function() {
-    $('#instructions').fadeOut();
+    $('#instructions').stop().fadeOut();
   });
 
   /** Save color before exiting */
