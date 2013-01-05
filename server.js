@@ -140,7 +140,7 @@ app.post('/login', function(req, res) {
     res.send({ err: 'Please enter a username and password.' });
     return;
   }
-  users.findOne({ username: req.body.username }, function(err, user) {
+  users.findOne({ username: req.body.username.toLowerCase() }, function(err, user) {
     if (!err && !!user && !!user.hash) {
       bcrypt.compare(req.body.password, user.hash, function(err, match) {
         if (match) {
