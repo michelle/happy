@@ -35,11 +35,7 @@ $(document).ready(function() {
   $('#form_settings').submit(function() {
     sendSettings(function(res) {
       if (!res.err) {
-        $('.info').text('Settings saved successfully.');
-        $('.info').fadeIn();
-        $('#settings').fadeOut();
-      } else {
-        $('.warn').text('Uh oh, try again later.');
+        $('#settings').stop().fadeOut();
       }
     });
     return false;
@@ -64,25 +60,31 @@ $(document).ready(function() {
     $('#login').stop().fadeOut(function() {
       $('.login-errors').hide();
       var color = user.color || '#ec8585'
-      $('#username').css({ 'color': color });
       $('#liquid').stop().animate({ 'backgroundColor': color }, function() {
-        $('#moving').stop().animate({ 'height': Math.min(100, 18 + user.happiness) + '%' });
+        selected_color = color;
+        $('#moving').stop().animate({ 'height': Math.min(100, 22 + user.happiness) + '%' });
+        for (var i = 0; i < bgColoredSelectors.length; i += 1) {
+          bgColoredSelectors[i].css({ 'backgroundColor': selected_color });
+        }
+        for (var i = 0; i < fgColoredSelectors.length; i += 1) {
+          fgColoredSelectors[i].css({ 'color': selected_color });
+        }
       });
       $('#username').text(user.username + '\'s');
       $('#title').animate({ 'width': 210 + $('#username').width() + 'px' }, function() {
         $('#username').stop().fadeIn();
       });
-      $('#panel').stop().fadeIn(function() {
-        // TODO: animate
-        $('#number').text(user.happiness);
-      });
+      $('#number').text(user.happiness);
+      $('#panel').stop().fadeIn();
+      $('#add').stop().fadeIn();
     });
   };
 
   // Update UI for logout.
   function logoutUI() {
     logged_in = false;
-    $('#settings').stop().fadeOut();
+    $('#sadness').hide();
+    $('#add').stop().fadeOut();
     $('#panel').stop().fadeOut(function() {
       $('#username').stop().fadeOut(function() {
         $('#title').animate({ 'width': 190 });
@@ -166,32 +168,79 @@ $(document).ready(function() {
       $('.warn').text('You\'re not logged in, so any happinesses you save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
       $('.warn').slideDown();
     }
-    $('#addbubble').fadeIn();
+    $('#addbubble').stop().fadeIn();
   });
 
-  $('#form_happy').submit(function() {
-    // TODO: get info and $.post!
-    return false;
-  });
 
   /** Open up settings */
   $('#open_settings').click(function() {
-    $('#settings').fadeIn();
+    $('#add_happiness').hide();
+    $('#settings').show();
   });
 
   /** Get a random happiness */
+  $('#sadness').mouseover(function() {
+    $('#panel').css({ opacity: 0.7 });
+  });
+  $('#sadness').mouseleave(function() {
+    $('#panel').css({ opacity: 1 });
+  });
   $('#sad').click(function() {
+    $('#add_happiness').hide();
     var el = $('#bubble');
     var newone = el.clone(true);
     el.before(newone);
-    $("." + el.attr("class") + ":last").remove();
+    el.remove();
     $.get('/random_happy', function(res) {
-      console.log(req.happiness);
+      if (res.happiness) {
+        $('#date').text(res.date);
+        $('#message').text(res.happiness);
+        $('#sadness').stop().fadeIn();
+      }
     });
   });
 
   /** Add happiness online */
   $('#add').click(function() {
+    $('#settings').hide();
+    $('#sadness').hide();
+    $('#add_happiness').show();
+  });
+
+  /** Handle happiness. */
+  $('#form_happiness').submit(function() {
+    var msg = $('#message_field').val();
+    if (!!msg) {
+      $.post('/happy', { message: msg }, function(res) {
+        $('#add_happiness').stop().fadeOut();
+        if (!res.err) {
+          var new_count = parseInt($('#number').text()) + 1;
+          $('#number').text(new_count);
+          $('#message_field').val('');
+          setTimeout(function() {
+            $('#moving').animate({ 'height': (22 + new_count) + '%' });
+          }, 500);
+        }
+      });
+    }
+    return false;
+  });
+
+  /** Close popups. */
+  $('#settings').on('click', '.close', function() {
+    $('#settings').hide();
+  });
+  $('#add_happiness').on('click', '.close', function() {
+    $('#add_happiness').hide();
+  });
+  $('#sadness').click(function() {
+    $(this).stop().fadeOut();
+  });
+  $('.info').click(function() {
+    $(this).stop().fadeOut();
+  });
+  $('.error').click(function() {
+    $(this).stop().fadeOut();
   });
 
   /** Save color before exiting */

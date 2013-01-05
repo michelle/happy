@@ -109,17 +109,18 @@ app.get('/logout', function(req, res) {
 
 // Retrieves a random happiness for the user, else return generic.
 app.get('/random_happy', function(req, res) {
-  console.log('wat');
   happies.find({ username: req.session.username }).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {
-        var happiness = h[Math.floor(Math.random() * h.length)];
-        res.send({ happiness: happiness });
+        var hh = h[Math.floor(Math.random() * h.length)];
+        var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
+        res.send({ happiness: hh.message, date: date });
       } else {
         happies.find({ username: '' }).toArray(function(err, h) {
           if (!err) {
-            var happiness = h[Math.floor(Math.random() * h.length)];
-            res.send({ happiness: happiness });
+            var hh = h[Math.floor(Math.random() * h.length)];
+            var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
+            res.send({ happiness: hh.message, date: date });
           }
         });
       }

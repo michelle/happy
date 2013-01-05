@@ -8,6 +8,12 @@ body, html {
   font-family: 'airplane', Helvetica, Arial;
   color: #4e4e4e;
 }
+#number, input {
+  font-family: Courier;
+}
+.submit {
+  font-family: 'airplane';
+}
 
 #wrapper {
   margin: 0 auto;
@@ -16,20 +22,128 @@ body, html {
   width: 500px;
 }
 
-#settings, #panel {
+#add, #add_happiness, #sadness, #settings, #panel {
   display: none;
 }
 .bubble:hover {
   cursor: pointer;
 }
 
+
+
 /* Control panel stylings */
-#settings, #panel {
-  position: relative;
-  width: 300px;
-  margin: 0 auto;
+#panel {
+  position: absolute;
+  top: 80px;
+  left: 100px;
 }
 
+#settings {
+  position: absolute;
+  top: 0px;
+  left: 80px;
+  width: 220px;
+}
+
+#logout {
+  border-radius: 0 0 20px 20px;
+}
+
+
+#number {
+  font-size: 15px;
+  padding: 10px;
+  text-align: center;
+  width: 48px;
+  background-color: #4e4e4e;
+  color: #c5ecec;
+  border-radius: 20px 20px 0 0;
+}
+
+
+/** Happiness form and settings. */
+#add_happiness {
+  margin-top: 40px;
+  width: 300px;
+  
+}
+
+#panel input {
+  border: none;
+  padding: 10px;
+  width: 280px;
+  font-size: 15px;
+  display: block;
+  color: #4e4e4e;
+}
+
+#settings input {
+  width: 200px;
+}
+
+#panel input:focus {
+  outline: none;
+  background-color: #f1fafa;
+}
+
+#panel .submit, #panel .button {
+  float: right;
+  width: auto;
+  padding: 10px;
+  display: inline-block;
+  background-color: transparent;
+  font-size: 18px;
+  text-transform: lowercase;
+  cursor: pointer;
+  color: #4e4e4e;
+  text-shadow: 0px 2px 0px rgba(256, 256, 256, 0.3);
+}
+
+#panel .submit:hover {
+  color: #333333;
+}
+
+#panel .button {
+  color: #c95858;
+}
+
+#panel .button:hover {
+  color: #ba4848;
+}
+
+#panel label {
+  display: block;
+  padding: 5px;
+  background-color: rgba(256, 256, 256, 0.3);
+  font-family: Courier;
+  font-size: 10px;
+}
+#phone {
+  color: #c95858;
+}
+#panel .label_title {
+  font-family: 'airplane', Helvetica, Arial;
+  font-size: 14px;
+  color: #c95858;
+}
+
+#panel button {
+  font-size: 14px;
+  display: block;
+  border: 0;
+  padding: 10px;
+  margin: 5px 5px 5px 0;
+  text-transform: lowercase;
+  width: 68px;
+  background-color: #4e4e4e;
+  font-weight: 300;
+  cursor: pointer;
+  color: #c5ecec;
+}
+
+#panel button:hover {
+  background-color: #333333;
+}
 
 /* Login form stylings */
 .login-errors {
@@ -91,18 +205,18 @@ body, html {
   background-color: #c5ecec !important;
 }
 
-#login #submit {
+#login .submit {
   width: 50px;
   font-size: 14px;
   float: none;
-  background-color: #828282;
+  background-color: #828282 !important;
   cursor: pointer;
   margin: 0 auto;
   margin-top: 5px;
   border-radius: 50px;
 }
 
-#login #submit:hover {
+#login .submit:hover {
   background-color: #6b6b6b;
 }
 
@@ -133,6 +247,7 @@ body, html {
   display: none;
   float: left;
   color: #ec8585;
+  text-shadow: 0px 2px 0px #96d8d8;
 }
 
 #hj {
@@ -249,14 +364,46 @@ body, html {
 
 
 /* Artsy stuff */
-#moving, #add, #background, #jar, #liquid, #outline {
+#sadness, #moving, #add, #background, #jar, #liquid, #outline {
   position: absolute;
+}
+
+#sadness {
+  cursor: pointer;
+  left: 100px;
+  text-transform: lowercase;
+  top: 25%;
+  width: 280px;
+  color: #4e4e4e;
+  line-height: 14px;
+}
+
+#message, #date {
+  font-size: 12px;
+  display: inline-block;
+  float: left;
+}
+
+#message {
+  margin-top: 1px;
+  width: 220px;
+  float: right;
+}
+
+#date {
+  width: 50px;
+  font-size: 10px;
+  font-family: Courier;
 }
 
 #add {
   top: -46px;
   width: 74px;
   left: 241px;
+}
+
+#add:hover {
+  opacity: .8;
 }
 
 #background {
@@ -395,6 +542,18 @@ body, html {
 }
 
 @-webkit-keyframes up {
+  0%{ width: 0px; height: 0px; bottom: 50px; }
+  100% { width: 40px; height: 40px; bottom: 100%; }
+}
+@-moz-keyframes up {
+  0%{ width: 0px; height: 0px; bottom: 50px; }
+  100% { width: 40px; height: 40px; bottom: 100%; }
+}
+@-o-keyframes up {
+  0%{ width: 0px; height: 0px; bottom: 50px; }
+  100% { width: 40px; height: 40px; bottom: 100%; }
+}
+@keyframes up {
   0%{ width: 0px; height: 0px; bottom: 50px; }
   100% { width: 40px; height: 40px; bottom: 100%; }
 }
