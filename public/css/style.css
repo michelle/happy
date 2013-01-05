@@ -5,14 +5,14 @@ a img {border: none;} /* Gets rid of IE's blue borders */
 
 body, html {
   background-color: #4e4e4e;
-  font-family: 'airplane', Helvetica, Arial;
+  font-family: 'airplaneregular', Helvetica, Arial;
   color: #4e4e4e;
 }
 #number, input {
   font-family: Courier;
 }
 .submit {
-  font-family: 'airplane';
+  font-family: 'airplaneregular';
 }
 
 #wrapper {
@@ -122,7 +122,7 @@ body, html {
   color: #c95858;
 }
 #panel .label_title {
-  font-family: 'airplane', Helvetica, Arial;
+  font-family: 'airplaneregular', Helvetica, Arial;
   font-size: 14px;
   color: #c95858;
 }
