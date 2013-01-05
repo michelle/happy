@@ -218,6 +218,7 @@ $(document).ready(function() {
     $('#settings').hide();
     $('#sadness').hide();
     $('#add_happiness').show();
+    $('#message_field').focus();
   });
 
   /** Handle happiness. */
