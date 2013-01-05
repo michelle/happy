@@ -173,7 +173,7 @@ app.post('/register', function(req, res) {
             sms: '',
             ignore: false,
             color: '',
-            username: req.body.username,
+            username: req.body.username.toLowerCase(),
             hash: hash,
             happiness: 0,
             count: 0
