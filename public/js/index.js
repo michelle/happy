@@ -56,6 +56,12 @@ $(document).ready(function() {
   // Update UI for login.
   function loginUI(user) {
     logged_in = true;
+    if (!!user.email) {
+      $('#email_field').val(user.email);
+    }
+    if (!!user.sms) {
+      $('#sms_field').val(user.sms);
+    }
     $('#login').stop().fadeOut(function() {
       $('.login-errors').hide();
       var color = user.color || '#ec8585'
@@ -81,6 +87,8 @@ $(document).ready(function() {
 
   // Update UI for logout.
   function logoutUI() {
+    $('#sms_field').val('');
+    $('#email_field').val('');
     logged_in = false;
     $('#sadness').hide();
     $('#add').stop().fadeOut();
