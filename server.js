@@ -144,7 +144,7 @@ app.post('/login', function(req, res) {
     if (!err && !!user && !!user.hash) {
       bcrypt.compare(req.body.password, user.hash, function(err, match) {
         if (match) {
-          req.session.username = req.body.username;
+          req.session.username = req.body.username.toLowerCase();;
           res.send({ user: user });
         } else {
           res.send({ err: 'Password is incorrect.' });
@@ -162,7 +162,7 @@ app.post('/register', function(req, res) {
     res.send({ err: 'Please enter a username and password.' });
     return;
   }
-  users.findOne({ username: req.body.username }, function(err, user) {
+  users.findOne({ username: req.body.username.toLowerCase() }, function(err, user) {
     if (!user) {
       bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
@@ -181,7 +181,7 @@ app.post('/register', function(req, res) {
             if (err) {
               res.send({ err: 'Username is taken.' });
             } else {
-              req.session.username = req.body.username;
+              req.session.username = req.body.username.toLowerCase();
               res.send({ user: result });
             }
           });
