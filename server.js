@@ -117,10 +117,12 @@ app.get('/random_happy', function(req, res) {
         res.send({ happiness: hh.message, date: date });
       } else {
         happies.find({ username: '' }).toArray(function(err, h) {
-          if (!err) {
+          if (!err && h.length > 0) {
             var hh = h[Math.floor(Math.random() * h.length)];
             var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
             res.send({ happiness: hh.message, date: date });
+          } else {
+            res.send({ err: 'Nothing found' });
           }
         });
       }

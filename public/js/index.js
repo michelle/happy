@@ -15,7 +15,6 @@ $(document).ready(function() {
   ];
 
   if (!!user) {
-    console.log(user);
     loginUI(user);
   }
   /**
@@ -127,9 +126,11 @@ $(document).ready(function() {
       password: $('#password_field').val()
     }, function(res) {
       if (res.user) {
-        loginUI(res.user);
         if (active == 'register') {
+          loginUI(res.user[0]);
           $('#settings').stop().fadeIn();
+        } else {
+          loginUI(res.user);
         }
       } else {
         $('.login-errors').text(res.err);
@@ -195,6 +196,10 @@ $(document).ready(function() {
       if (res.happiness) {
         $('#date').text(res.date);
         $('#message').text(res.happiness);
+        $('#sadness').stop().fadeIn();
+      } else {
+        $('#date').text('Oh no...');
+        $('#message').text('you haven\'t added any happinesses. Just consider the bad times down payment for the good ones :).');
         $('#sadness').stop().fadeIn();
       }
     });
