@@ -1,3 +1,6 @@
+// TODO: refactor for new db schema.
+
+
 /** Script to run to send everyone their messages. */
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
