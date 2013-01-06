@@ -34,7 +34,7 @@ body, html {
 /* Control panel stylings */
 #panel {
   position: absolute;
-  top: 80px;
+  top: 120px;
   left: 100px;
 }
 
@@ -65,7 +65,6 @@ body, html {
 #add_happiness {
   margin-top: 40px;
   width: 300px;
-  
 }
 
 #panel input {
@@ -160,12 +159,11 @@ body, html {
   position: absolute;
   right: 83px;
   margin: 0 auto;
-  top: 102px;
+  top: 142px;
   background-color: #4e4e4e;
   border-radius: 20px 0 0 20px;
   padding: 0 0 10px 0px;
   width: 275px;
-
 }
 #login button {
   cursor: pointer;
@@ -371,7 +369,7 @@ body, html {
   cursor: pointer;
   left: 100px;
   text-transform: lowercase;
-  top: 25%;
+  top: 68%;
   width: 280px;
   color: #4e4e4e;
   line-height: 14px;
@@ -396,8 +394,8 @@ body, html {
 }
 
 #add {
-  top: -46px;
   width: 74px;
+  top: 0px;
   left: 241px;
 }
 
@@ -413,11 +411,12 @@ body, html {
   z-index: 0;
 }
 
-#jar, #outline {
+#outline {
   top: 130px;
 }
 
 #jar {
+  top: 90px;
   background-color: #c5ecec;
   height: 500px;
   width: 500px;
@@ -446,8 +445,8 @@ body, html {
 
 #liquid {
   width: 100%;
-  height: 100%;
-  bottom: 0;
+  top: 46px;
+  bottom: 0px;
   background: #ec8585 url('/images/liquidbg.png');
   background-size: contain;
   background-position: top;
