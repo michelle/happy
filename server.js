@@ -4,6 +4,7 @@ var app = express.createServer();
 
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
+var SkinStore = require('connect-mongoskin');
 
 var bcrypt = require('bcrypt');
 
@@ -54,7 +55,11 @@ app.use(express.bodyParser());
 app.use(express.cookieParser());
 
 app.use(express.static(__dirname + '/public'));
-app.use(express.session({ secret: 'michelle', maxAge : new Date(Date.now() + 2628000000) }));
+app.use(express.session({
+  secret: 'michelle',
+  maxAge : new Date(Date.now() + 2628000000),
+  store: new SkinStore(db)
+}));
 
 app.set('view engine', 'ejs');
 app.set('views', __dirname + '/views');
