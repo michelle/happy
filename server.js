@@ -108,12 +108,16 @@ app.post('/leave', function(req, res) {
 
 // Removes session from user on logout.
 app.get('/logout', function(req, res) {
-  req.session.username = null;
+  delete req.session.username;
   res.redirect('/');
 });
 
 // Retrieves a random happiness for the user, else return generic.
 app.get('/random_happy', function(req, res) {
+  if (req.session.username === undefined) {
+    res.send(401);
+    return;
+  }
   happies.find({ username: req.session.username }).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {
