@@ -56,7 +56,7 @@ app.use(express.cookieParser());
 
 app.use(express.static(__dirname + '/public'));
 app.use(express.session({
-  secret: 'michelle',
+  secret: process.argv[3],
   maxAge : new Date(Date.now() + 2628000000),
   store: new SkinStore(db)
 }));
