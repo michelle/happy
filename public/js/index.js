@@ -67,7 +67,7 @@ $(document).ready(function() {
       var color = user.color || '#ec8585'
       $('#liquid').stop().animate({ 'backgroundColor': color }, function() {
         selected_color = color;
-        $('#moving').stop().animate({ 'height': Math.min(100, 22 + user.happiness) + '%' });
+        $('#moving').stop().animate({ 'height': Math.min(100, Math.round((35 + user.happiness) / 200 * 100)) + '%' });
         for (var i = 0; i < bgColoredSelectors.length; i += 1) {
           bgColoredSelectors[i].css({ 'backgroundColor': selected_color });
         }
@@ -232,7 +232,7 @@ $(document).ready(function() {
           $('#number').text(new_count);
           $('#message_field').val('');
           setTimeout(function() {
-            $('#moving').animate({ 'height': (22 + new_count) + '%' });
+            $('#moving').stop().animate({ 'height': Math.min(100, Math.round((35 + new_count) / 200 * 100)) + '%' });
           }, 500);
         }
       });
