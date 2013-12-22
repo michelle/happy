@@ -25,7 +25,7 @@ function jsonToCsvAndText(arr) {
     var obj = arr[i];
 
     // For text.
-    text += '<li>"' + obj.message + '" <em>(' + obj.date.getMonth() + '/' + obj.date.getDate() + ')</em></li>';
+    text += '<li>"' + obj.message + '" <em>(' + (obj.date.getMonth() + 1) + '/' + obj.date.getDate() + ')</em></li>';
 
     // For CSV.
     var entry = '';
