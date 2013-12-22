@@ -76,7 +76,7 @@ function job() {
             };
 
             smtpTransport.sendMail(msg, function(err, res) {
-              console.log(err || message.message);
+              console.log(err || res);
             });
           });
         })(user);
