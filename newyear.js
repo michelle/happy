@@ -5,6 +5,7 @@
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
 var users = db.collection('users');
+var happinesses = db.collection('2013happy');
 
 var email = require('emailjs');
 var server = email.server.connect({
@@ -49,22 +50,27 @@ function jsonToCsvAndText(arr) {
 }
 
 users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
+  console.log('found users');
   for (var i = 0; i < res.length; i += 1) {
     user = res[i];
     if (!!user.email && user.happiness.length > 0) {
-      var happinessInfo = jsonToCsvAndText(happinesses.find({username: user.username}));
-      var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!' + happinessInfo[1];
-      var msg = {
-        text: text,
-        from: 'The Happiness Moose <moosefrans@gmail.com>',
-        to: 'analogmidnight@gmail.com', //user.email,
-        subject: '[Your Happiness Jar] Last year\'s happiest moments.',
-        attachment: [
-          {data: happinessInfo[0], alternative: true},
-        ]
-      };
+      (function(u) {
+        happinesses.find({username: u.username}).toArray(function(err, happies) {
+          happies = jsonToCsvAndText(happies);
+          var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!' + happies[1];
+          var msg = {
+            text: text,
+            from: 'The Happiness Moose <moosefrans@gmail.com>',
+            to: 'analogmidnight@gmail.com', //u.email,
+            subject: '[Your Happiness Jar] Last year\'s happiest moments.',
+            attachment: [
+              {data: happies[0], alternative: true},
+            ]
+          };
 
-      server.send(msg, function(err, message) { console.log(err || message); });
+          server.send(msg, function(err, message) { console.log(err || message); });
+        });
+      })(user);
     }
   }
 });
