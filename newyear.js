@@ -59,7 +59,7 @@ users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
           happies = jsonToCsvAndText(happies);
           var html = 'Hey <strong>' + u.username + '</strong>,<br><br>Enjoy this past year\'s happiest moments...and don\'t forget to make new ones in the new year!<br><br><br>' + happies[1] + '<br><br><br>Love,<br><strong><a href="http://happinessjar.com">Your Happiness Jar</strong></a>';
           var msg = {
-            text: text,
+            html: html,
             from: 'The Happiness Moose <moosefrans@gmail.com>',
             to: 'analogmidnight@gmail.com', //u.email,
             subject: '[Your Happiness Jar] Last year\'s happiest moments.',
