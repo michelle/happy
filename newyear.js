@@ -1,7 +1,7 @@
 /** Script to run to send everyone their messages on 1/1. */
 var YEAR = 2013;
 
-var cron = require('cron');
+var cronJob = require('cron').CronJob;
 
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
@@ -17,7 +17,7 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   }
 });
 
-var j = new cron(new Date(YEAR + 1, 1, 1), job, function() {
+var j = new cronJob(new Date(YEAR + 1, 1, 1), job, function() {
   console.log('HAPPY NEW YEAR!!!#@');
 }, false);
 
