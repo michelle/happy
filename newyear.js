@@ -74,7 +74,7 @@ function job() {
               html: html,
               from: 'The Happiness Moose <moosefrans@gmail.com>',
               to: u.email,
-              subject: '[Your Happiness Jar] Last year\'s happiest moments.'
+              subject: '[Your Happiness Jar] 2013\'s happiest moments.'
             };
 
             smtpTransport.sendMail(msg, function(err, res) {
