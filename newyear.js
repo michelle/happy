@@ -17,9 +17,9 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   }
 });
 
-var j = new cronJob(new Date(YEAR + 1, 1, 1), job, function() {
+var j = new cronJob(new Date(YEAR + 1, 0, 1), job, function() {
   console.log('HAPPY NEW YEAR!!!#@');
-}, false);
+}, true);
 
 // Converts an array of JSON objects a CSV/text string.
 function jsonToCsvAndText(arr) {
