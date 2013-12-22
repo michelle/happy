@@ -7,12 +7,13 @@ var db = mongo.db('mongodb://localhost:27017/happy');
 var users = db.collection('users');
 var happinesses = db.collection('2013happy');
 
-var email = require('emailjs');
-var server = email.server.connect({
-  user: 'moosefrans@gmail.com',
-  password: process.argv[2] || 'password',
-  host: 'smtp.gmail.com',
-  ssl: true
+var nodemailer = require('nodemailer');
+var smtpTransport = nodemailer.createTransport("SMTP",{
+  service: "Gmail",
+  auth: {
+    user: 'moosefrans@gmail.com',
+    password: process.argv[2] || 'password',
+  }
 });
 
 /** Formats a list prettily TODO: with HTML and stuff.. */
@@ -50,12 +51,12 @@ function jsonToCsvAndText(arr) {
 }
 
 users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
-  console.log('found users');
   for (var i = 0; i < res.length; i += 1) {
     user = res[i];
-    if (!!user.email && user.happiness.length > 0) {
+    if (!!user.email && user.happiness > 0) {
       (function(u) {
         happinesses.find({username: u.username}).toArray(function(err, happies) {
+          console.log(happies)
           happies = jsonToCsvAndText(happies);
           var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!' + happies[1];
           var msg = {
@@ -63,12 +64,12 @@ users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
             from: 'The Happiness Moose <moosefrans@gmail.com>',
             to: 'analogmidnight@gmail.com', //u.email,
             subject: '[Your Happiness Jar] Last year\'s happiest moments.',
-            attachment: [
-              {data: happies[0], alternative: true},
+            attachments: [
+              {content: happies[0], contentType: 'text/csv'},
             ]
           };
 
-          server.send(msg, function(err, message) { console.log(err || message); });
+          smtpTransport.sendMail(msg, function(err, message) { console.log(err || message.message); });
         });
       })(user);
     }
