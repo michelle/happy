@@ -5,14 +5,14 @@
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
 var users = db.collection('users');
-var happinesses = db.collection('2013happy');
+var happinesses = db.collection('2013happies');
 
 var nodemailer = require('nodemailer');
-var smtpTransport = nodemailer.createTransport("SMTP",{
+var smtpTransport = nodemailer.createTransport("SMTP", {
   service: "Gmail",
   auth: {
     user: 'moosefrans@gmail.com',
-    password: process.argv[2] || 'password',
+    pass: process.argv[2] || 'password',
   }
 });
 
@@ -26,7 +26,7 @@ function jsonToCsvAndText(arr) {
     var obj = arr[i];
 
     // For text.
-    text += obj.message + ' (' + obj.date.toString() + ')\n';
+    text += '"' + obj.message + '" (' + obj.date.toString() + ')\n';
 
     // For CSV.
     var entry = '';
@@ -56,9 +56,8 @@ users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
     if (!!user.email && user.happiness > 0) {
       (function(u) {
         happinesses.find({username: u.username}).toArray(function(err, happies) {
-          console.log(happies)
           happies = jsonToCsvAndText(happies);
-          var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!' + happies[1];
+          var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!\n\n' + happies[1];
           var msg = {
             text: text,
             from: 'The Happiness Moose <moosefrans@gmail.com>',
