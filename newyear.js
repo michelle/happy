@@ -1,7 +1,7 @@
 /** Script to run to send everyone their messages on 1/1. */
 var YEAR = 2013;
 
-var schedule = require('node-schedule');
+var cron = require('cron');
 
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
@@ -17,7 +17,9 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   }
 });
 
-var j = schedule.scheduleJob(new Date(YEAR + 1, 1, 1), job);
+var j = new cron(new Date(YEAR + 1, 1, 1), job, function() {
+  console.log('HAPPY NEW YEAR!!!#@');
+}, false);
 
 // Converts an array of JSON objects a CSV/text string.
 function jsonToCsvAndText(arr) {
