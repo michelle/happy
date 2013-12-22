@@ -56,7 +56,7 @@ function jsonToCsvAndText(arr) {
 
 function job() {
   users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
-    for (var i = 0; i < 1; i += 1) {
+    for (var i = 0, ii = res.length; i < ii; i += 1) {
       user = res[i];
       if (!!user.email && user.happiness > 0) {
         (function(u) {
