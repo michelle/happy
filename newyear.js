@@ -47,7 +47,7 @@ function jsonToCsvAndText(arr) {
     csv += entry + '\r\n';
   }
   csv = header + '\r\n' + csv;
-  return [csv, text + '</ul>];
+  return [csv, text + '</ul>'];
 }
 
 users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
