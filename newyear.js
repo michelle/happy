@@ -26,7 +26,7 @@ function jsonToCsvAndText(arr) {
     var obj = arr[i];
 
     // For text.
-    text += '<li>"' + obj.message + '" <em>(' + obj.date.toString() + ')</em></li>';
+    text += '<li>"' + obj.message + '" <em>(' + obj.date.getMonth() + '/' + obj.date.getDate() + ')</em></li>';
 
     // For CSV.
     var entry = '';
@@ -57,7 +57,7 @@ users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
       (function(u) {
         happinesses.find({username: u.username}).toArray(function(err, happies) {
           happies = jsonToCsvAndText(happies);
-          var html = 'Hey <strong>' + u.username + '</strong>,<br><br>Enjoy this past year\'s happiest moments...and don\'t forget to make new ones in the new year!<br><br><br>' + happies[1] + '<br><br><br>Love,<br><strong><a href="http://happinessjar.com">Your Happiness Jar</strong></a>';
+          var html = 'Hey <strong>' + u.username + '</strong>,<br><br>Enjoy 2013\'s happiest moments...and don\'t forget to make new ones in the new year!<br>' + happies[1] + '<br>Love,<br><strong><a href="http://happinessjar.com">Your Happiness Jar</strong></a>';
           var msg = {
             html: html,
             from: 'The Happiness Moose <moosefrans@gmail.com>',
