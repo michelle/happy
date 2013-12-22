@@ -19,14 +19,14 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
 /** Formats a list prettily TODO: with HTML and stuff.. */
 // Converts an array of JSON objects a CSV string.
 function jsonToCsvAndText(arr) {
-  var text = '';
+  var text = '<ul>';
   var csv = '';
   var header = '';
   for (var i = 0; i < arr.length; i += 1) {
     var obj = arr[i];
 
     // For text.
-    text += '"' + obj.message + '" (' + obj.date.toString() + ')\n';
+    text += '<li>"' + obj.message + '" <em>(' + obj.date.toString() + ')</em></li>';
 
     // For CSV.
     var entry = '';
@@ -47,17 +47,17 @@ function jsonToCsvAndText(arr) {
     csv += entry + '\r\n';
   }
   csv = header + '\r\n' + csv;
-  return [csv, text];
+  return [csv, text + '</ul>];
 }
 
 users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
-  for (var i = 0; i < res.length; i += 1) {
+  for (var i = 0; i < 1; i += 1) {
     user = res[i];
     if (!!user.email && user.happiness > 0) {
       (function(u) {
         happinesses.find({username: u.username}).toArray(function(err, happies) {
           happies = jsonToCsvAndText(happies);
-          var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!\n\n' + happies[1];
+          var html = 'Hey <strong>' + u.username + '</strong>,<br><br>Enjoy this past year\'s happiest moments...and don\'t forget to make new ones in the new year!<br><br><br>' + happies[1] + '<br><br><br>Love,<br><strong><a href="http://happinessjar.com">Your Happiness Jar</strong></a>';
           var msg = {
             text: text,
             from: 'The Happiness Moose <moosefrans@gmail.com>',
