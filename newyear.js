@@ -16,8 +16,7 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   }
 });
 
-/** Formats a list prettily TODO: with HTML and stuff.. */
-// Converts an array of JSON objects a CSV string.
+// Converts an array of JSON objects a CSV/text string.
 function jsonToCsvAndText(arr) {
   var text = '<ul>';
   var csv = '';
@@ -47,7 +46,7 @@ function jsonToCsvAndText(arr) {
     csv += entry + '\r\n';
   }
   csv = header + '\r\n' + csv;
-  return [csv, text + '</ul>'];
+  return {csv: csv, text: text + '</ul>'};
 }
 
 users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
@@ -57,15 +56,12 @@ users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
       (function(u) {
         happinesses.find({username: u.username}).toArray(function(err, happies) {
           happies = jsonToCsvAndText(happies);
-          var html = 'Hey <strong>' + u.username + '</strong>,<br><br>Enjoy 2013\'s happiest moments...and don\'t forget to make new ones in the new year!<br>' + happies[1] + '<br>Love,<br><strong><a href="http://happinessjar.com">Your Happiness Jar</strong></a>';
+          var html = 'Hey <strong>' + u.username + '</strong>,<br><br>Enjoy 2013\'s happiest moments...and don\'t forget to make new ones in the new year!<br>' + happies.text + '<br>Love,<br><strong><a href="http://happinessjar.com">Your Happiness Jar</strong></a>';
           var msg = {
             html: html,
             from: 'The Happiness Moose <moosefrans@gmail.com>',
             to: 'analogmidnight@gmail.com', //u.email,
-            subject: '[Your Happiness Jar] Last year\'s happiest moments.',
-            attachments: [
-              {content: happies[0], contentType: 'text/csv'},
-            ]
+            subject: '[Your Happiness Jar] Last year\'s happiest moments.'
           };
 
           smtpTransport.sendMail(msg, function(err, message) { console.log(err || message.message); });
