@@ -8,7 +8,7 @@ var users = db.collection('users');
 
 var email = require('emailjs');
 var server = email.server.connect({
-  user: 'thehappinessjar@gmail.com',
+  user: 'moosefrans@gmail.com',
   password: process.argv[2] || 'password',
   host: 'smtp.gmail.com',
   ssl: true
@@ -16,43 +16,51 @@ var server = email.server.connect({
 
 /** Formats a list prettily TODO: with HTML and stuff.. */
 // Converts an array of JSON objects a CSV string.
-function JSONtoCSV(jsonArray) {
+function jsonToCsvAndText(arr) {
+  var text = '';
   var csv = '';
   var header = '';
-  for (var i = 0; i < jsonArray.length; i += 1) {
+  for (var i = 0; i < arr.length; i += 1) {
+    var obj = arr[i];
+
+    // For text.
+    text += obj.message + ' (' + obj.date.toString() + ')\n';
+
+    // For CSV.
     var entry = '';
-    var obj = jsonArray[i];
     for (var property in obj) {
-      if (obj.hasOwnProperty(property)) {
+      if (obj.hasOwnProperty(property) && ['_id', 'username'].indexOf(property) === -1) {
         // Create header.
         if (i == 0) {
-          if (header != '') header += ','
-          header += property
+          if (header != '') header += ',';
+          header += property;
         }
         // Comma-split unless line is empty.
-        if (entry != '') entry += ','
-        entry += jsonArray[i][property];
+        if (entry != '') {
+          entry += ',';
+        }
+        entry += arr[i][property];
       }
     }
     csv += entry + '\r\n';
   }
   csv = header + '\r\n' + csv;
-  return csv;
+  return [csv, text];
 }
 
-users.find({}).toArray(function(err, res) {
+users.find({'email': {'$ne': ''}}).toArray(function(err, res) {
   for (var i = 0; i < res.length; i += 1) {
     user = res[i];
     if (!!user.email && user.happiness.length > 0) {
-      var formatted_happiness = JSONtoCSV(user.happiness);
+      var happinessInfo = jsonToCsvAndText(happinesses.find({username: user.username}));
+      var text = 'Enjoy this past year\'s happiest moments...and don\'t forget to make new ones next year!' + happinessInfo[1];
       var msg = {
-        text:    'Enjoy this past year\'s moments...and don\'t forget to make new ones next year!', 
-        from:    'Happiness Jar <thehappinessjar@gmail.com>', 
-        to:      user.email,
-        subject: '[Happiness Jar] Last year\'s happiest moments.',
-        attachment:
-        [
-          { data: formatted_happiness, alternative: true},
+        text: text,
+        from: 'The Happiness Moose <moosefrans@gmail.com>',
+        to: 'analogmidnight@gmail.com', //user.email,
+        subject: '[Your Happiness Jar] Last year\'s happiest moments.',
+        attachment: [
+          {data: happinessInfo[0], alternative: true},
         ]
       };
 
