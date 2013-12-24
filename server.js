@@ -8,13 +8,6 @@ var SkinStore = require('connect-mongoskin');
 
 var bcrypt = require('bcrypt');
 
-var email = require('emailjs');
-var mailer = email.server.connect({
-  user: 'thehappinessjar@gmail.com',
-  password: process.argv[2] || 'password',
-  host: 'smtp.gmail.com',
-  ssl: true
-});
 // Temporary lost password links.
 var lostUsers = {};
 
@@ -40,7 +33,13 @@ users.ensureIndex({ 'username' : 1 });
  *  message: String
  * }
  */
-var happies = db.collection('2013happies');
+function happies() {
+  return db.collection(new Date().getFullYear() + 'happies');
+};
+
+function valid(username) {
+  return username.length < 21 && /^[a-zA-Z0-9\_]+$/.test(username);
+};
 
 
 /** Generate random session ID. */
@@ -67,7 +66,7 @@ app.set('views', __dirname + '/views');
 app.get('/', function(req, res) {
   if (req.session.username) {
     users.findOne({ username: req.session.username }, function(err, user) {
-      if (!!user) {
+      if (user) {
         res.render('index', { user: JSON.stringify(user) });
       } else {
         res.redirect('/logout');
@@ -81,7 +80,7 @@ app.get('/', function(req, res) {
 // Password reset page.
 app.get('/reset/:key', function(req, res) {
   var key = req.params.key;
-  if (!!lostUsers[key]) {
+  if (lostUsers[key]) {
     res.render('reset', { user: lostUsers[key] });
   } else {
     res.redirect('/');
@@ -91,7 +90,7 @@ app.get('/reset/:key', function(req, res) {
 // Save new password, redirect to index.
 app.post('/reset/:key', function(req, res) {
   var key = req.params.key;
-  if (!!lostUsers[key] && lostUsers[key] == req.body.username) {
+  if (lostUsers[key] && lostUsers[key] == req.body.username) {
     // TODO: Reset password of associated user.
   } else {
     res.redirect('/');
@@ -118,25 +117,17 @@ app.get('/random_happy', function(req, res) {
     res.send(401);
     return;
   }
-  happies.find({ username: req.session.username }).toArray(function(err, h) {
+  happies().find({ username: req.session.username }).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {
         var hh = h[Math.floor(Math.random() * h.length)];
         var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
         res.send({ happiness: hh.message, date: date });
       } else {
-        happies.find({ username: '' }).toArray(function(err, h) {
-          if (!err && h.length > 0) {
-            var hh = h[Math.floor(Math.random() * h.length)];
-            var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
-            res.send({ happiness: hh.message, date: date });
-          } else {
-            res.send({ err: 'Nothing found' });
-          }
-        });
+        res.send({happiness: "You haven't put anything in your jar yet!", date: ':('});
       }
     } else {
-      res.send({ err: 'Nothing found' });
+      res.send({err: 'Nothing found'});
     }
   });
 });
@@ -146,21 +137,21 @@ app.post('/login', function(req, res) {
   // if data.type == register, then error should say username taken.
   // otherwise error should say wrong pw. done on front end?
   if (!req.body.username || !req.body.password) {
-    res.send({ err: 'Please enter a username and password.' });
+    res.send({err: 'Please enter a username and password.'});
     return;
   }
   users.findOne({ username: req.body.username.toLowerCase() }, function(err, user) {
-    if (!err && !!user && !!user.hash) {
+    if (!err && user && user.hash) {
       bcrypt.compare(req.body.password, user.hash, function(err, match) {
         if (match) {
           req.session.username = req.body.username.toLowerCase();;
-          res.send({ user: user });
+          res.send({user: user});
         } else {
-          res.send({ err: 'Password is incorrect.' });
+          res.send({err: 'Password is incorrect.'});
         }
       });
     } else {
-      res.send({ err: 'Username does not exist.' });
+      res.send({err: 'Username does not exist.'});
     }
   });
 
@@ -168,10 +159,14 @@ app.post('/login', function(req, res) {
 
 app.post('/register', function(req, res) {
   if (!req.body.username || !req.body.password) {
-    res.send({ err: 'Please enter a username and password.' });
+    res.send({err: 'Please enter a username and password.'});
     return;
   }
-  users.findOne({ username: req.body.username.toLowerCase() }, function(err, user) {
+  if (!valid(req.body.username)) {
+    res.send({err: 'Your username can contain up to 20 letters, numbers, or _.'});
+    return;
+  }
+  users.findOne({username: req.body.username.toLowerCase()}, function(err, user) {
     if (!user) {
       bcrypt.genSalt(10, function(err, salt) {
         bcrypt.hash(req.body.password, salt, function(err, hash) {
@@ -188,37 +183,37 @@ app.post('/register', function(req, res) {
             count: 0
           }, {}, function(err, result) {
             if (err) {
-              res.send({ err: 'Username is taken.' });
+              res.send({err: 'Username is taken.'});
             } else {
               req.session.username = req.body.username.toLowerCase();
-              res.send({ user: result });
+              res.send({user: result});
             }
           });
         });
       });
     } else {
-      res.send({ err: 'Username is taken.' });
+      res.send({err: 'Username is taken.'});
     }
   });
 });
 
 // Saves a happiness.
 app.post('/happy', function(req, res) {
-  happies.insert({
+  happies().insert({
     username: req.session.username || '',
     date: new Date(),
     message: req.body.message
   }, function(err, result) {
     if (!err) {
-      users.update({ username: req.session.username },
-        { $inc: { happiness: 1 } },
+      users.update({username: req.session.username},
+        {$inc: {happiness: 1}},
         {},
         function(err) {
-          res.send({ result: result });
+          res.send({result: result});
         }
       );
     } else {
-      res.send({ err: 'Whoops, try again later.' });
+      res.send({err: 'Whoops, try again later.'});
     }
   });
 });
@@ -227,34 +222,39 @@ app.post('/happy', function(req, res) {
 app.post('/save', function(req, res) {
   // TODO: check to see what changed.
   var sms = req.body.sms;
-  if (!!sms) {
-    sms = sms.replace(/\D/g,"");
+  if (sms) {
+    sms = sms.replace(/\D/g, '');
   }
-  users.update({ username: req.session.username },
-    { $set: {
-              email: req.body.email,
-              ignore: req.body.ignore,
-              twitter: req.body.twitter,
-              sms: sms }
+  users.update(
+    {username: req.session.username},
+    {
+      $set: {
+        email: req.body.email,
+        ignore: req.body.ignore,
+        twitter: req.body.twitter,
+        sms: sms
+      }
     },
     {},
     function(err) {
       if (!err) {
-        res.send({ result: 'Details successfully saved.' });
+        res.send({result: 'Details successfully saved.'});
       } else {
-        res.send({ err: err });
+        res.send({err: err});
       }
     }
   );
 });
 
+
+
 // Sends a lost password email.
 app.post('/lost', function(req, res) {
-  if (!!req.body.email) {
-    users.findOne({ email: req.body.email }, function(err, user) {
-      if (!err && !!user) {
+  if (req.body.email) {
+    users.findOne({email: req.body.email}, function(err, user) {
+      if (!err && user) {
         var random = randomId();
-        while (!!lostUsers[random]) {
+        while (lostUsers[random]) {
           random = randomId();
         }
 
@@ -266,32 +266,27 @@ app.post('/lost', function(req, res) {
           subject: '[Happiness Jar] Reset your password.',
         };
 
-        mailer.send(msg, function(err, message) {
-          if (err) {
-            res.send({ error: 'Message could not be sent.' });
-          } else {
-            lostUsers[random] = res.username;
-            res.send({ info: 'A password reset link has been sent to your email.' });
-          }
-        });
+        // TODO: send mail
       } else {
-        res.send({ error: 'Email does not belong to an account.' });
+        res.send({error: 'Email does not belong to an account.'});
       }
     });
   } else {
-    res.send({ error: 'Please enter an email.' });
+    res.send({error: 'Please enter an email.'});
   }
 });
+
+
 
 // Handle a new text message.
 // Query users for that phone number. If ':(', send back a random happiness.
 // Otherwise, store it.
 app.post('/new_text', function(req, res) {
   var sms = req.body;
-  if (!!sms && !!sms.text && !!sms.number) {
-    users.findOne({ sms: sms.number }, function(err, user) {
-      if (!!user && !!user.username) {
-        happies.insert({
+  if (sms && sms.text && sms.number) {
+    users.findOne({sms: sms.number}, function(err, user) {
+      if (user && user.username) {
+        happies().insert({
           username: user.username,
           date: new Date(),
           message: sms.text
