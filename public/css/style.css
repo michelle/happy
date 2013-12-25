@@ -3,256 +3,172 @@ a {outline: none;} /* Gets rid of Firefox's dotted borders */
 a img {border: none;} /* Gets rid of IE's blue borders */
 
 
+/* Dark blue: #143e53 */
+/* Dark teal: #366464 */
+
 body, html {
-  background-color: #4e4e4e;
-  font-family: 'airplaneregular', Helvetica, Arial;
-  color: #4e4e4e;
-}
-#number, input {
-  font-family: Courier;
-}
-.submit {
-  font-family: 'airplaneregular';
+  min-height: 100%;
+  height: 100%;
+  background-color: #a1bd88;
+  overflow: hidden;
 }
 
 #wrapper {
   margin: 0 auto;
   position: relative;
-  z-index: 1;
-  width: 500px;
+  width: 60%;
+  height: 100%;
+  z-index: 99;
 }
 
-#add, #add_happiness, #sadness, #settings, #panel {
-  display: none;
-}
-.bubble:hover {
-  cursor: pointer;
-}
-
-
-
-/* Control panel stylings */
-#panel {
+#lid, #jar, #liquid {
   position: absolute;
-  top: 120px;
-  left: 100px;
 }
 
-#settings {
-  position: absolute;
-  top: 0px;
-  left: 80px;
-  width: 220px;
-}
-
-#logout {
-  border-radius: 0 0 20px 20px;
-}
-
-
-#number {
-  font-size: 15px;
-  padding: 10px;
-  text-align: center;
-  width: 48px;
-  background-color: #4e4e4e;
-  color: #c5ecec;
-  border-radius: 20px 20px 0 0;
-}
-
-
-/** Happiness form and settings. */
-#add_happiness {
-  margin-top: 40px;
-  width: 300px;
-}
-
-#panel input {
-  border: none;
-  padding: 10px;
-  width: 280px;
-  font-size: 15px;
-  display: block;
-  color: #4e4e4e;
-}
-
-#settings input {
+#lid {
+  bottom: 290px;
+  height: 30px;
   width: 200px;
+  background-color: #fff;
+  border-radius: 5px;
+  border-top: 1px solid #f2eee0;
 }
 
-#panel input:focus {
-  outline: none;
-  background-color: #f1fafa;
+#jar {
+  bottom: 40px;
+  background-color: rgba(232,244,216, 0.4) ;
+  height: 250px;
+  width: 200px;
+  overflow: hidden;
+  border-radius: 10px 10px 20px 20px;
+  border-left: 1px solid rgba(255,255,255,0.5);
+  border-right: 1px solid rgba(255,255,255,0.5);
+  box-sizing: border-box;
 }
 
-#panel .submit, #panel .button {
-  float: right;
-  width: auto;
-  padding: 10px;
-  display: inline-block;
-  background-color: transparent;
-  font-size: 18px;
-  text-transform: lowercase;
-  cursor: pointer;
-  color: #4e4e4e;
+#liquid {
+  width: 201px;
+  bottom: 0px;
+  background-color: #d64f42;
+  opacity: 0.7;
+  pointer-events: none;
+  height: 60%; /* TO CHANGE */
+  background: radial-gradient(ellipse farthest-side at 20% 100%, #b57162 20%, #d64f42), radial-gradient(ellipse farthest-side at 100% 75%, #fff, rgba(255,255,255,0) 80%), radial-gradient(ellipse farthest-side at 85% 60%, #d64f42 10%, #b57162), radial-gradient(circle closest-corner at 50% 0, #fff, #afb4bc)
 }
 
-#panel .submit:hover {
-  color: #333333;
+#liquid.shine {
+  background-color: #f4bc63;
+  background: radial-gradient(ellipse farthest-side at 20% 100%, #d64f42 20%, #f4bc63), radial-gradient(ellipse farthest-side at 100% 75%, #fff, rgba(255,255,255,0) 80%), radial-gradient(ellipse farthest-side at 85% 60%, #f4bc63 10%, #d64f42), radial-gradient(circle closest-corner at 50% 0, #fff, #afb4bc)
 }
 
-#panel .button {
-  color: #c95858;
-}
-
-#panel .button:hover {
-  color: #ba4848;
-}
-
-#panel label {
-  display: block;
-  padding: 5px;
-  background-color: rgba(256, 256, 256, 0.3);
-  font-family: Courier;
-  font-size: 10px;
-}
-#phone {
-  color: #c95858;
-}
-#panel .label_title {
-  font-family: 'airplaneregular', Helvetica, Arial;
-  font-size: 14px;
-  color: #c95858;
-}
-
-#panel button {
-  font-size: 14px;
-  display: block;
-  border: 0;
-  padding: 10px;
-  margin: 5px 5px 5px 0;
-  text-transform: lowercase;
-  width: 68px;
-  background-color: #4e4e4e;
-  font-weight: 300;
-  cursor: pointer;
-  color: #c5ecec;
-}
-
-#panel button:hover {
-  background-color: #333333;
-}
-
-/* Login form stylings */
-.login-errors {
-  background-color: #ec8585;
-  border-radius: 0px 0px 15px 15px;
-  display: none;
-  color: #4e4e4e;
-  width: 70%;
-  padding: 10px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-#login {
+.snow {
   position: absolute;
-  right: 83px;
-  margin: 0 auto;
-  top: 142px;
-  background-color: #4e4e4e;
-  border-radius: 20px 0 0 20px;
-  padding: 0 0 10px 0px;
-  width: 275px;
-}
-#login button {
-  cursor: pointer;
-  margin: 20px 30px 5px 40px;
-  border: none;
-  background-color: transparent;
-  font-size: 25px;
-  color: #828282;
+  width: 100%;
 }
 
-#login button:hover {
-  color: #6b6b6b;
+.front, .middle, .front .clump div, .middle .clump div {
+  background-color: #fcfff2;
 }
 
-#login .active, #login .active:hover {
-  cursor: default;
+.front .clump {
+  padding-left: 180px;
 }
 
-/** TODO: CHANGE INPUT FONTS */
-#login input {
-  width: 80%;
-  display: block;
-  margin: 2px 0px;
-  border-radius: 10px 0 0 10px;
-  padding: 15px;
-  font-size: 22px;
-  border: none;
+.snow.front {
+  z-index: 100;
+  bottom: 0px;
+  height: 40px;
+}
+
+.snow.middle {
+  bottom: 0px;
+  height: 90px;
+  z-index: 2;
+}
+
+.snow.back {
+  bottom: 0px;
+  height: 150px;
+  z-index: 1;
+}
+
+.back, .back .clump div {
+  background-color: #e8f4d8;
+}
+
+.middle .clump {
+  margin-top: -50px;
+  float: left;
+}
+.back .clump {
+  margin-top: -50px;
   float: right;
-  background-color: #ec8585;
-  color: #4e4e4e;
 }
 
-
-#login input:focus {
-  outline: none;
-  background-color: #c5ecec !important;
+.clump {
+  position: relative;
+  height: 100px;
+  width: 250px;
 }
 
-#login .submit {
+.snow.front .clump {
+  margin: -50px auto 0 auto;
+  width: 60%;
+}
+
+.clump div {
+  position: absolute;
+  border-radius: 100px;
+  background-color: #fff;
+}
+.clump .one {
+  left: 0px;
+  top: 35px;
+  width: 30px;
+  height: 30px;
+}
+.clump .two {
+  left: 20px;
+  width: 80px;
+  height: 80px;
+}
+.clump .three {
+  left: 80px;
+  top: 10px;
+  width: 30px;
+  height: 30px;
+}
+.clump .four {
+  left: 80px;
+  top: 20px;
   width: 50px;
-  font-size: 14px;
-  float: none;
-  background-color: #828282 !important;
-  cursor: pointer;
-  margin: 0 auto;
-  margin-top: 5px;
-  border-radius: 50px;
+  height: 50px;
+}
+.clump .five {
+  left: 120px;
+  top: 30px;
+  width: 60px;
+  height: 60px;
+}
+.clump .six {
+  left: 150px;
+  top: 10px;
+  width: 80px;
+  height: 80px;
+}
+.clump .seven {
+  left: 220px;
+  top: 40px;
+  width: 30px;
+  height: 30px;
 }
 
-#login .submit:hover {
-  background-color: #6b6b6b;
-}
 
 .clear {
   clear: both;
 }
 
-#login label {
-  color: #ec8585;
-  float: right;
-  width: 90%;
-  font-size: 14px;
-  margin-top: 8px;
-}
-
-/* Titles */
 #title {
-  position: relative;
-  z-index: 100;
-  font-size: 40px;
-  padding-top: 50px;
-  width: 190px;
-  margin: 0 auto;
-  line-height: 50px;
-}
-
-#username {
-  display: none;
-  float: left;
-  color: #ec8585;
-  text-shadow: 0px 2px 0px #96d8d8;
-}
-
-#hj {
-  float: right;
-
-}
-
-#outline, #title, #moving, #background {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -270,6 +186,7 @@ body, html {
   z-index: 100;
   background-color: #404040;
 }
+
 #footercontainer {
   line-height: 40px;
   color: #6d6d6d;
@@ -361,9 +278,6 @@ body, html {
 
 
 /* Artsy stuff */
-#sadness, #moving, #add, #background, #jar, #liquid, #outline {
-  position: absolute;
-}
 
 #sadness {
   cursor: pointer;
@@ -403,63 +317,11 @@ body, html {
   opacity: .8;
 }
 
-#background {
-  background-color: #c5ecec;
-  width: 100%;
-  top: 0;
-  height: 130px;
-  z-index: 0;
-}
 
 #outline {
   top: 130px;
 }
 
-#jar {
-  top: 90px;
-  background-color: #c5ecec;
-  height: 500px;
-  width: 500px;
-}
-
-
-#moving {
-  bottom: 0px;
-  width: 450px;
-  height: 90%;
-  /*
-  animation-name: liquid;
-  -webkit-animation-name: liquid;
-  -moz-animation-name: liquid;
-  -o-animation-name: liquid;
-  animation-duration: 2s;
-  -webkit-animation-duration: 2s;
-  -moz-animation-duration: 2s;
-  -o-animation-duration: 2s;
-  animation-iteration-count: infinite;
-  -webkit-animation-iteration-count: infinite;
-  -o-animation-iteration-count: infinite;
-  -moz-animation-iteration-count: infinite;
-  */
-}
-
-#liquid {
-  width: 100%;
-  top: 46px;
-  bottom: 0px;
-  background: #ec8585 url('/images/liquidbg.png');
-  background-size: contain;
-  background-position: top;
-  background-repeat: no-repeat;
-  pointer-events: none;
-}
-
-
-
-
-
-#wrapper img {
-}
 
 #outline {
   background: url('/images/jar.png');
@@ -511,7 +373,8 @@ body, html {
 
 #bubble {
   left: 110px;
-  background-color: #c5ecec;
+  background-color: #e8f4d8;
+  opacity: 0.4;
   border-radius: 20px;
   position: absolute;
 }
@@ -534,37 +397,37 @@ body, html {
 }
 
 @-webkit-keyframes up {
-  0%{ width: 0px; height: 0px; bottom: 50px; }
+  0%{ width: 0px; height: 0px; bottom: 0px; }
   100% { width: 40px; height: 40px; bottom: 100%; }
 }
 @-moz-keyframes up {
-  0%{ width: 0px; height: 0px; bottom: 50px; }
+  0%{ width: 0px; height: 0px; bottom: 0px; }
   100% { width: 40px; height: 40px; bottom: 100%; }
 }
 @-o-keyframes up {
-  0%{ width: 0px; height: 0px; bottom: 50px; }
+  0%{ width: 0px; height: 0px; bottom: 0px; }
   100% { width: 40px; height: 40px; bottom: 100%; }
 }
 @keyframes up {
-  0%{ width: 0px; height: 0px; bottom: 50px; }
+  0%{ width: 0px; height: 0px; bottom: 0px; }
   100% { width: 40px; height: 40px; bottom: 100%; }
 }
 
 @-webkit-keyframes shake {
-  0%, 100% { left: 10px; }
-  50% { left: 20px; }
+  0%, 100% { padding-bottom: 0px; }
+  50% { padding-bottom: 5px; }
 }
 @-moz-keyframes shake {
-  0%, 100% { left: 10px; }
-  50% { left: 20px; }
+  0%, 100% { padding-bottom: 0px; }
+  50% { padding-bottom: 5px; }
 }
 @-o-keyframes shake {
-  0%, 100% { left: 10px; }
-  50% { left: 20px; }
+  0%, 100% { padding-bottom: 0px; }
+  50% { padding-bottom: 5px; }
 }
 @keyframes shake {
-  0%, 100% { left: 10px; }
-  50% { left: 20px; }
+  0%, 100% { padding-bottom: 0px; }
+  50% { padding-bottom: 5px; }
 }
 
 
