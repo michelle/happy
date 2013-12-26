@@ -1,24 +1,14 @@
 $(document).ready(function() {
   var active = 'login';
   var selected_color = '#ec8585';
-  var current_color_selector = 'fred';
   var logged_in = false;
 
-  var bgColoredSelectors = [
-    $('#login input'),
-    $('.login-errors')
-  ];
-
-  var fgColoredSelectors = [
-    $('#login label'),
-    $('#username')
-  ];
 
   if (user) {
     loginUI(user);
   }
 
-  // Resets the settings handler.
+  // TODO Resets the settings handler.
   $('#form_settings').submit(function() {
     sendSettings(function(res) {
       if (!res.err) {
@@ -42,6 +32,7 @@ $(document).ready(function() {
   // Update UI for login.
   function loginUI(user) {
     logged_in = true;
+    // TODO
     if (user.email) {
       $('#email_field').val(user.email);
     }
@@ -50,47 +41,24 @@ $(document).ready(function() {
     }
     $('#login').stop().fadeOut(function() {
       $('.login-errors').hide();
-      var color = user.color || '#ec8585'
-      $('#liquid').stop().animate({ 'backgroundColor': color }, function() {
-        selected_color = color;
-        $('#moving').stop().animate({ 'height': Math.min(100, Math.round((35 + user.happiness) / 200 * 100)) + '%' });
-        for (var i = 0; i < bgColoredSelectors.length; i += 1) {
-          bgColoredSelectors[i].css({ 'backgroundColor': selected_color });
-        }
-        for (var i = 0; i < fgColoredSelectors.length; i += 1) {
-          fgColoredSelectors[i].css({ 'color': selected_color });
-        }
-      });
-      $('#username').text(user.username + '\'s');
-      $('#title').animate({ 'width': 210 + $('#username').width() + 'px' }, function() {
-        $('#username').stop().fadeIn();
-      });
-      $('#number').text(user.happiness);
-      $('#panel').stop().fadeIn();
-      $('#add').stop().fadeIn();
+      var color = user.color || '#ec8585'; // TODO
+      $('.liquid').stop().animate({ 'backgroundColor': color, 'height': Math.min(100, Math.round((35 + user.happiness) / 200 * 100)) + '%' });
+      $('.username').text(user.username + '\'s');
     });
   };
 
   // Update UI for logout.
   function logoutUI() {
+    // TODO
     $('#sms_field').val('');
     $('#email_field').val('');
     logged_in = false;
     $('#sadness').hide();
-    $('#add').stop().fadeOut();
-    $('#panel').stop().fadeOut(function() {
-      $('#username').stop().fadeOut(function() {
-        $('#title').animate({ 'width': 190 });
-      });
-      $('#moving').stop().animate({ 'height': '90%' }, function() {
-        $('#login').stop().fadeIn();
-      });
-    });
   };
 
   function logout() {
     $.post('/leave', { color: selected_color });
-    $.get('/logout', function() {
+    $.post('/logout', function() {
       logoutUI();
     });
   };
@@ -100,31 +68,30 @@ $(document).ready(function() {
   });
 
   // Toggle login form.
-  $('#select_login').click(function() {
+  $('a.login').click(function() {
+    $('.button.register, a.login').addClass('hidden');
+    $('.button.login, a.register').removeClass('hidden');
     active = 'login';
-    $('.active').removeClass();
-    $(this).addClass('active');
-    $(this).addClass(current_color_selector);
   });
-  $('#select_register').click(function() {
+  $('a.register').click(function() {
+    $('.button.login, a.register').addClass('hidden');
+    $('.button.register, a.login').removeClass('hidden');
     active = 'register';
-    $('.active').removeClass();
-    $(this).addClass('active');
-    $(this).addClass(current_color_selector);
   });
 
-  $('#form_login').submit(function() {
+  $('.login.form').submit(function() {
     var url = active == 'login' ? '/login' : '/register';
     $.post(url, {
-      username: $('#username_field').val(),
-      password: $('#password_field').val()
+      username: $(this).find('input[name=username]').val(),
+      password: $(this).find('input[name=password]').val()
     }, function(res) {
       if (res.user) {
         if (active == 'register') {
-          loginUI(res.user[0]);
-          $('#settings').stop().fadeIn();
+          //loginUI(res.user[0]);
+          console.log('Registered');
         } else {
-          loginUI(res.user);
+          //loginUI(res.user);
+          console.log('Logged in');
         }
       } else {
         $('.login-errors').text(res.err);
@@ -135,51 +102,17 @@ $(document).ready(function() {
     return false;
   });
 
-  /** Change color of happiness. */
-  $('.color').click(function() {
-    $('.selected').removeClass('selected');
-    $(this).addClass('selected');
-    if (selected_color != $(this).css('backgroundColor')) {
-      selected_color = $(this).css('backgroundColor');
-      current_color_selector = 'f' + $(this).attr('id');
-      var lr = $('.active');
-      lr.removeClass();
-      lr.addClass('active');
-      lr.addClass(current_color_selector);
-      $('#liquid').stop().animate({ 'backgroundColor': selected_color });
-      for (var i = 0; i < bgColoredSelectors.length; i += 1) {
-        bgColoredSelectors[i].css({ 'backgroundColor': selected_color });
-      }
-      for (var i = 0; i < fgColoredSelectors.length; i += 1) {
-        fgColoredSelectors[i].css({ 'color': selected_color });
-      }
-    }
-  });
-
 
   /** Add a happy! */
   $('#add').click(function() {
     if (!logged_in) {
-      $('.warn').text('You\'re not logged in, so any happinesses you save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
+      $('.warn').text('You\'re not logged in, so any happinesses you. save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
       $('.warn').slideDown();
     }
-    $('#addbubble').stop().fadeIn();
+    // TODO
   });
 
 
-  /** Open up settings */
-  $('#open_settings').click(function() {
-    $('#add_happiness').hide();
-    $('#settings').show();
-  });
-
-  /** Get a random happiness */
-  $('#sadness').mouseover(function() {
-    $('#panel').css({ opacity: 0.7 });
-  });
-  $('#sadness').mouseleave(function() {
-    $('#panel').css({ opacity: 1 });
-  });
   $('#sad').click(function() {
     $('#add_happiness').hide();
     var el = $('#bubble');
@@ -226,30 +159,6 @@ $(document).ready(function() {
     return false;
   });
 
-  /** Close popups. */
-  $('#settings').on('click', '.close', function() {
-    $('#settings').hide();
-  });
-  $('#add_happiness').on('click', '.close', function() {
-    $('#add_happiness').hide();
-  });
-  $('#sadness').click(function() {
-    $(this).stop().fadeOut();
-  });
-  $('.info').click(function() {
-    $(this).stop().fadeOut();
-  });
-  $('.error').click(function() {
-    $(this).stop().fadeOut();
-  });
-
-  /** instructions */
-  $('.instructions').click(function() {
-    $('#instructions').stop().fadeToggle();
-  });
-  $('#instructions').on('click', '.close', function() {
-    $('#instructions').stop().fadeOut();
-  });
 
   /** Save color before exiting */
   window.onbeforeunload = function() {

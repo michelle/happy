@@ -60,8 +60,8 @@ body, html {
   width: 200px;
   overflow: hidden;
   border-radius: 10px 10px 20px 20px;
-  border-left: 2px solid rgba(255,255,255,0.4);
-  border-right: 2px solid rgba(255,255,255,0.4);
+  border-left: 1px solid rgba(255,255,255,0.4);
+  border-right: 1px solid rgba(255,255,255,0.4);
   box-sizing: border-box;
 }
 
@@ -72,6 +72,7 @@ body, html {
   opacity: 0.7;
   height: 40%; /* TO CHANGE */
   overflow: hidden;
+  border-top: 1px solid rgba(0,0,0,0.1);
 }
 
 .liquid.shine {
@@ -241,19 +242,33 @@ body, html {
 }
 
 .hidden {
-  display: none;
+  display: none !important;
+}
+
+.username {
+  height: 20px;
+  position: absolute;
+  color: #366464;
+  font-variant: small-caps;
+  letter-spacing: 1px;
+  padding-left: 8px;
 }
 
 .title {
+  position: relative;
+  text-shadow: 0 -1px 0 rgba(255,255,255,0.2);
+  top: 20px;
+  left: 18px;
+  z-index: 100;
+}
+
+.title .hj {
   color: #fff7dd;
   font-family: 'Grand Hotel', sans-serif;
   text-shadow: 0 1px 0 rgba(0,0,0,0.2);
   font-size: 40px;
+  line-height: 70px;
   text-transform: lowercase;
-  position: relative;
-  top: 25px;
-  left: 18px;
-  z-index: 100;
 }
 
 .title, .snows {
@@ -406,9 +421,9 @@ body, html {
   border: 0px;
   background-color: #fcfff2;
   border-radius: 5px;
-  font-weight: 600;
   color: #7f9d7a;
   width: 100%;
+  letter-spacing: 1px;
   box-sizing: border-box;
   -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.2);
   -moz-box-shadow: 0 1px 0 rgba(0,0,0,0.2);
@@ -427,7 +442,7 @@ input, button {
   padding: 9px 15px;
   display: inline-block;
   border: 0px;
-  font-weight: 600;
+  letter-spacing: 1px;
   font-size: 12px;
   border-radius: 5px;
   background-color: #86a581;
@@ -446,8 +461,9 @@ input, button {
 .switch {
   display: inline-block;
   font-variant: small-caps;
-  font-weight: 600;
+  font-size: 14px;
   color: #fff7dd;
+  letter-spacing: 1px;
   float: right;
   padding: 6px 0;
   cursor: pointer;
@@ -455,6 +471,19 @@ input, button {
 
 .switch a:hover {
   color: #e8f4d8;
+}
+
+.login-errors {
+  display: none;
+  font-size: 12px;
+  color: #e8f4d8;
+  background-color: #366464;
+  border-radius: 5px;
+  padding: 9px 12px;
+  text-align: center;
+  -webkit-box-shadow: 0 1px 0 #224242;
+  -moz-box-shadow: 0 1px 0 #224242;
+  box-shadow: 0 1px 0 #224242;
 }
 
 ::-webkit-input-placeholder { /* WebKit browsers */

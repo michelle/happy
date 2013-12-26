@@ -106,7 +106,7 @@ app.post('/leave', function(req, res) {
 });
 
 // Removes session from user on logout.
-app.get('/logout', function(req, res) {
+app.post('/logout', function(req, res) {
   delete req.session.username;
   res.redirect('/');
 });
