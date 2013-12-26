@@ -14,21 +14,9 @@ $(document).ready(function() {
     $('#username')
   ];
 
-  if (!!user) {
+  if (user) {
     loginUI(user);
   }
-  /**
-   * These should already be on the page:
-   *   Interfaces
-   *   Jar, with liquid nearly full, custom jar height if logged in.
-   *   Default title, special title if logged in.
-   *   Count of happiness if logged in.
-   *   Color of the liquid if logged in.
-   *   Appropriate bubbles if logged in.
-   *   Color changes if logged in.
-   */
-  // For sad note, bubble popup.
-
 
   // Resets the settings handler.
   $('#form_settings').submit(function() {
@@ -46,8 +34,6 @@ $(document).ready(function() {
     $.post('/save', {
       sms: $('#sms_field').val(),
       email: $('#email_field').val(),
-      ignore: $('#ignore_field').val(),
-      twitter: $('#twitter_field').val()
     }, function(res) {
       cb(res);
     });
@@ -56,10 +42,10 @@ $(document).ready(function() {
   // Update UI for login.
   function loginUI(user) {
     logged_in = true;
-    if (!!user.email) {
+    if (user.email) {
       $('#email_field').val(user.email);
     }
-    if (!!user.sms) {
+    if (user.sms) {
       $('#sms_field').val(user.sms);
     }
     $('#login').stop().fadeOut(function() {
@@ -224,7 +210,7 @@ $(document).ready(function() {
   /** Handle happiness. */
   $('#form_happiness').submit(function() {
     var msg = $('#message_field').val();
-    if (!!msg) {
+    if (msg) {
       $.post('/happy', { message: msg }, function(res) {
         $('#add_happiness').stop().fadeOut();
         if (!res.err) {

@@ -1,13 +1,12 @@
 <div id="login">
   <div class="login-errors"></div>
-  <button id="select_login" class="active fred">login</button>
-  <button id="select_register">register</button>
-  <form id="form_login">
-    <label for="username_field">username</label>
-    <input type="text" id="username_field" required></input>
-    <label for="password_field">password</label>
-    <input type="password" id="password_field" required></input>
+  <form class="login form">
+    <input type="text" class="field" placeholder="username" name="username" required></input>
+    <input type="password" class="field" placeholder="password" name="password" required></input>
     <div class="clear"></div>
-    <input type="submit" class="submit" value="go">
+    <input type="submit" class="button submit" value="sign in">
+    <div class="switch">
+      <a class="login hidden">sign in</a><a class="register">sign up</a>
+    </div>
   </form>
 </div>

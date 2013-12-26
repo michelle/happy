@@ -18,78 +18,78 @@
   </div>
 </div>
 
-<div class="snow middle">
-  <div class="clump">
-    <div class="one"></div>
-    <div class="two"></div>
-    <div class="three"></div>
-    <div class="four"></div>
-    <div class="five"></div>
-    <div class="six"></div>
-    <div class="seven"></div>
+<div class="snows">
+  <div class="snow middle">
+    <div class="clump">
+      <div class="one"></div>
+      <div class="two"></div>
+      <div class="three"></div>
+      <div class="four"></div>
+      <div class="five"></div>
+      <div class="six"></div>
+      <div class="seven"></div>
+    </div>
+    <div class="clump">
+      <div class="one"></div>
+      <div class="two"></div>
+      <div class="three"></div>
+      <div class="four"></div>
+      <div class="five"></div>
+      <div class="six"></div>
+      <div class="seven"></div>
+    </div>
+    <div class="clump">
+      <div class="one"></div>
+      <div class="two"></div>
+      <div class="three"></div>
+      <div class="four"></div>
+      <div class="five"></div>
+      <div class="six"></div>
+      <div class="seven"></div>
+    </div>
   </div>
-  <div class="clump">
-    <div class="one"></div>
-    <div class="two"></div>
-    <div class="three"></div>
-    <div class="four"></div>
-    <div class="five"></div>
-    <div class="six"></div>
-    <div class="seven"></div>
+
+  <div class="snow back">
+    <div class="clump">
+      <div class="one"></div>
+      <div class="two"></div>
+      <div class="three"></div>
+      <div class="four"></div>
+      <div class="five"></div>
+      <div class="six"></div>
+      <div class="seven"></div>
+    </div>
+    <div class="clump">
+      <div class="one"></div>
+      <div class="two"></div>
+      <div class="three"></div>
+      <div class="four"></div>
+      <div class="five"></div>
+      <div class="six"></div>
+      <div class="seven"></div>
+    </div>
   </div>
-  <div class="clump">
-    <div class="one"></div>
-    <div class="two"></div>
-    <div class="three"></div>
-    <div class="four"></div>
-    <div class="five"></div>
-    <div class="six"></div>
-    <div class="seven"></div>
-  </div>
-</div>
-<div class="snow back">
-  <div class="clump">
-    <div class="one"></div>
-    <div class="two"></div>
-    <div class="three"></div>
-    <div class="four"></div>
-    <div class="five"></div>
-    <div class="six"></div>
-    <div class="seven"></div>
-  </div>
-  <div class="clump">
-    <div class="one"></div>
-    <div class="two"></div>
-    <div class="three"></div>
-    <div class="four"></div>
-    <div class="five"></div>
-    <div class="six"></div>
-    <div class="seven"></div>
-  </div>
-  <div class="clump">
-    <div class="one"></div>
-    <div class="two"></div>
-    <div class="three"></div>
-    <div class="four"></div>
-    <div class="five"></div>
-    <div class="six"></div>
-    <div class="seven"></div>
+
   </div>
 </div>
 
-<div id="wrapper">
+<div class="wrapper">
 
-  <div id="lid"></div>
-  <div id="jar">
-    <div id="liquid" class="animated shake"></div>
-    <div id="bubble" class="short up"></div>
+  <div class="title">
+    <div id="username"><% if (!!user) { %><%=user.username%><% } %></div>
+    <div class="hj">happiness jar</div>
   </div>
 
-</div>
+  <%- partial('partials/login') %>
 
-<div id="title">
-  <div id="username"><% if (!!user) { %><%=user.username%><% } %></div>
-  <div id="hj">happiness jar</div>
+  <div class="lid"></div>
+    <div class="bubble long"></div>
+  <div class="jar">
+    <div class="liquid animated shake">
+      <div class="bubble short up"></div>
+    </div>
+  </div>
+
 </div>
 
 
