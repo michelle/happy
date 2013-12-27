@@ -9,6 +9,7 @@ var YELLOW = '#EBDB8C';
 var BLUE = '#6D9FB6';
 var PURPLE = '#a2676c';
 var ORIGINAL_COUNT = 80;
+var DULL = '#96797a';
 
 var active = 'login';
 var selectedColor = RED;
@@ -208,6 +209,9 @@ $(document).ready(function() {
         $('.happy-date').text('Oh no...');
         $('.happy-message').text('we couldn\'t find any happinesses. Just consider the bad times down payment for the good ones :).');
       }
+      $liquid.stop().animate({backgroundColor: DULL}, function() {
+        $liquid.stop().animate({backgroundColor: selectedColor});
+      });
     });
   });
 

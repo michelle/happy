@@ -119,6 +119,7 @@ app.get('/random_happy', function(req, res) {
         var hh = h[Math.floor(Math.random() * h.length)];
         var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
         res.send({happiness: hh.message, date: date});
+        return;
       }
     }
     res.send({err: 'Nothing found'});
