@@ -9,55 +9,64 @@ a img {border: none;} /* Gets rid of IE's blue borders */
 body, html {
   min-height: 100%;
   height: 100%;
-  background: #92ae8d; /* Old browsers */
-  background: -moz-linear-gradient(top, #92ae8d 0%, #a1bd88 52%, #a1bd88 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#92ae8d), color-stop(52%,#a1bd88), color-stop(100%,#a1bd88)); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, #92ae8d 0%,#a1bd88 52%,#a1bd88 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, #92ae8d 0%,#a1bd88 52%,#a1bd88 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, #92ae8d 0%,#a1bd88 52%,#a1bd88 100%); /* IE10+ */
-  background: linear-gradient(to bottom, #92ae8d 0%,#a1bd88 52%,#a1bd88 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#92ae8d', endColorstr='#a1bd88',GradientType=0 ); /* IE6-9 */
-  overflow: hidden;
+  background: #a1bd88; /* Old browsers */
 
   font-family: 'Metrophobic', sans-serif;
   font-size: 15px;
   color: #7f9d7a;
 }
 
+.outer {
+  min-height: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.wrapper, .snow.front .clump {
+  width: 60%;
+  min-width: 200px;
+  max-width: 600px;
+}
 
 .wrapper {
   margin: 0 auto;
   position: relative;
-  width: 60%;
-  min-width: 200px;
-  max-width: 600px;
   height: 100%;
-  z-index: 99;
+  z-index: 98;
 }
 
-.lid, .jar, .liquid {
+.top-background, .jar, .liquid {
   position: absolute;
   pointer-events: none;
 }
 
 .lid {
-  bottom: 290px;
+  bottom: 270px;
   height: 30px;
-  width: 200px;
   background-color: #fcfff2;
   border-radius: 5px;
   border-bottom: 1px solid #a4c19f;
   box-sizing: border-box;
-  padding: 6px 9px;
+  position: absolute;
+  padding: 9px 15px;
   color: #a1bd88;
-  font-weight: bold;
+  text-shadow: 0 1px 0 #fff;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 1px;
+  cursor: pointer;
+}
+
+.lid, .jar {
+  width: 180px;
+  left: 10px;
 }
 
 .jar {
   bottom: 40px;
   background-color: rgba(186,246,255,0.3);
-  height: 250px;
-  width: 200px;
+  height: 230px;
   overflow: hidden;
   border-radius: 10px 10px 20px 20px;
   border-left: 2px solid rgba(255,255,255,0.4);
@@ -68,20 +77,30 @@ body, html {
 .liquid {
   width: 201px;
   bottom: -5px;
-  background-color: #d64f42;
   opacity: 0.7;
+  background-color: #d64f42;
   height: 40%; /* TO CHANGE */
   overflow: hidden;
-  border-top: 1px solid rgba(0,0,0,0.1);
+  border-left: 2px solid rgba(0,0,0,0.1);
 }
 
-.liquid.shine {
-  background-color: #f4bc63;
-}
 
 .snows {
   overflow: hidden;
   width: 100%;
+}
+
+.sad {
+  position: absolute;
+  color: #a2ccd2;
+  bottom: 100px;
+  left: 30px;
+  z-index: 3;
+  cursor: pointer;
+}
+
+.sad:hover {
+  padding-bottom: 2px;
 }
 
 .snow {
@@ -144,7 +163,6 @@ body, html {
 
 .snow.front .clump {
   margin: -50px auto 0 auto;
-  width: 60%;
 }
 
 .clump div {
@@ -256,28 +274,48 @@ body, html {
 
 .title {
   position: relative;
-  text-shadow: 0 -1px 0 rgba(255,255,255,0.2);
   top: 20px;
   left: 18px;
+  width: 164px;
   z-index: 100;
 }
 
 .title .hj {
+  position: absolute;
   color: #fff7dd;
   font-family: 'Grand Hotel', sans-serif;
   text-shadow: 0 1px 0 rgba(0,0,0,0.2);
   font-size: 40px;
   line-height: 70px;
   text-transform: lowercase;
+  z-index: 2;
 }
 
-.title, .snows {
+.title, .snows, .lid {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+}
+
+#number {
+  display: none;
+  position: absolute;
+  text-align: right;
+  right: -30px;
+  top: 30px;
+  line-height: 30px;
+  background-color: #d64f42;
+  padding: 10px;
+  width: 25px;
+  height: 25px;
+  color: rgba(255,255,255,0.8);
+  border: 1px solid rgba(0,0,0,0.1);
+  border-radius: 50px;
+  z-index: 1;
+  opacity: 0.8;
 }
 
 .long {
@@ -307,10 +345,10 @@ body, html {
 }
 
 .bubble {
-  left: 110px;
   opacity: 0.4;
   border-radius: 20px;
   position: absolute;
+  left: 130px;
 }
 
 .bubble.up {
@@ -318,6 +356,7 @@ body, html {
 }
 
 .bubble.down {
+  left: 110px;
   background-color: rgba(255,255,255,0.3);
 }
 
@@ -406,12 +445,63 @@ body, html {
 
 
 /* Login partial */
-#login {
-  width: 200px;
+.menu, #settings, #login {
   position: absolute;
-  top: 90px;
-  left: 0px;
+  display: none;
+  width: 200px;
   z-index: 100;
+}
+
+#login {
+  top: 95px;
+}
+
+#settings{
+  top: 100px;
+}
+
+.menu {
+  left: 24px;
+  bottom: 308px;
+  width: 152px;
+}
+
+.menu a {
+  font-size: 14px;
+  font-variant: small-caps;
+  text-transform: lowercase;
+  letter-spacing: 1px;
+  display: block;
+  color: #e8f4d8;
+  cursor: pointer;
+}
+
+.menu a:hover {
+  color: #fff;
+}
+
+.top {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  width: 100%;
+  z-index: 100;
+}
+.top-background {
+  position: absolute;
+  top: 0px;
+  background-color: rgba(162,190,146,0.6);
+  background: -moz-linear-gradient(top,  rgba(146,174,141,1) 0%, rgba(255,255,255,0) 70%, rgba(255,255,255,0) 100%); /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(146,174,141,1)), color-stop(70%,rgba(255,255,255,0)), color-stop(100%,rgba(255,255,255,0))); /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top,  rgba(146,174,141,1) 0%,rgba(255,255,255,0) 70%,rgba(255,255,255,0) 100%); /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top,  rgba(146,174,141,1) 0%,rgba(255,255,255,0) 70%,rgba(255,255,255,0) 100%); /* Opera 11.10+ */
+  background: -ms-linear-gradient(top,  rgba(146,174,141,1) 0%,rgba(255,255,255,0) 70%,rgba(255,255,255,0) 100%); /* IE10+ */
+  background: linear-gradient(to bottom,  rgba(146,174,141,1) 0%,rgba(255,255,255,0) 70%,rgba(255,255,255,0) 100%); /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#92ae8d', endColorstr='#00ffffff',GradientType=0 ); /* IE6-9 */
+  width: 100%;
+  left: 0px;
+  z-index: 99;
+  min-height: 400px;
 }
 
 .field {
@@ -450,6 +540,7 @@ input, button {
   -webkit-box-shadow: 0 1px 0 rgba(255,255,255,0.2);
   -moz-box-shadow: 0 1px 0 rgba(255,255,255,0.2);
   box-shadow: 0 1px 0 rgba(255,255,255,0.2);
+  margin-bottom: 5px;
   color: #fcfff2;
 }
 
@@ -462,7 +553,7 @@ input, button {
   display: inline-block;
   font-variant: small-caps;
   font-size: 14px;
-  color: #fff7dd;
+  color: #667e62;
   letter-spacing: 1px;
   float: right;
   padding: 6px 0;
@@ -470,7 +561,7 @@ input, button {
 }
 
 .switch a:hover {
-  color: #e8f4d8;
+  color: #758e71;
 }
 
 .login-errors {
@@ -506,3 +597,40 @@ input, button {
   font-variant: small-caps;
   text-align: right;
 }
+
+#happiness {
+  display: none;
+  position: absolute;
+  width: 180px;
+  left: 10px;
+  bottom: 305px;
+  height: 0px;
+  text-align: center;
+}
+
+#happiness .field {
+  height: 29px;
+  font-size: 12px;
+  letter-spacing: 0px;
+}
+#happiness .field:focus {
+  background-color: #fff;
+}
+
+#happiness .button {
+  background-color: rgb(202,225,204);
+  color: #8aa98c;
+  -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  -moz-box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.1);
+  display: inline-block;
+  padding: 6px 8px;
+  margin: 1px;
+}
+
+#happiness .button:hover {
+  background-color: #fff;
+}
+
+
+

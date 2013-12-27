@@ -1,15 +1,61 @@
+function encodeHTML(s) {
+  return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+}
+
+var RED = '#d64f42';
+var ORANGE = '#f4bc63';
+var GREEN = '#a1bd88';
+var YELLOW = '#EBDB8C';
+var BLUE = '#6D9FB6';
+var PURPLE = '#a2676c';
+var ORIGINAL_COUNT = 80;
+
+var active = 'login';
+var selectedColor = RED;
+var currentCount = ORIGINAL_COUNT;
+
 $(document).ready(function() {
-  var active = 'login';
-  var selected_color = '#ec8585';
-  var logged_in = false;
+  var loggedIn = false;
+  var $liquid = $('.liquid');
+  var $number = $('#number');
+  var $bubble = $('.bubble.up');
+
+  var $menu = $('.menu');
+  var $login = $('#login');
+  var $happiness = $('#happiness');
+  var $username = $('.username');
+
+  function changeCount(number, color) {
+    currentCount = number;
+    var height = Math.min(100, Math.round(number / 200 * 100)) + '%';
+    if (loggedIn) {
+      $number.text(number);
+      $number.show();
+    }
+    $liquid.stop().animate({height: height, backgroundColor: ORANGE}, function() {
+      changeColor(color || selectedColor);
+    });
+  }
+
+  function changeColor(color) {
+    selectedColor = color;
+    $liquid.stop().animate({backgroundColor: color});
+    $number.stop().animate({backgroundColor: color});
+  }
+  change = changeColor;
 
 
   if (user) {
     loginUI(user);
+  } else {
+    logoutUI();
   }
 
+  /**
+   * SETTINGS
+   */
   // TODO Resets the settings handler.
-  $('#form_settings').submit(function() {
+  $('.settings.form').submit(function() {
     sendSettings(function(res) {
       if (!res.err) {
         $('#settings').stop().fadeOut();
@@ -17,6 +63,10 @@ $(document).ready(function() {
     });
     return false;
   });
+
+  $happiness.on('click', '.close', function() {
+    $happiness.stop().fadeOut('fast');
+  })
 
   // Send a new set of settings to the user.
   function sendSettings(cb) {
@@ -29,41 +79,49 @@ $(document).ready(function() {
     });
   };
 
+  /**
+   * LOGIN/LOGOUT
+   */
   // Update UI for login.
   function loginUI(user) {
-    logged_in = true;
+    loggedIn = true;
     // TODO
     if (user.email) {
-      $('#email_field').val(user.email);
+      $('.email.field').val(encodeHTML(user.email));
     }
     if (user.sms) {
-      $('#sms_field').val(user.sms);
+      $('.sms.field').val(encodeHTML(user.sms));
     }
-    $('#login').stop().fadeOut(function() {
+    $login.stop().fadeOut(function() {
       $('.login-errors').hide();
-      var color = user.color || '#ec8585'; // TODO
-      $('.liquid').stop().animate({ 'backgroundColor': color, 'height': Math.min(100, Math.round((35 + user.happiness) / 200 * 100)) + '%' });
-      $('.username').text(user.username + '\'s');
+      changeCount(user.happiness, user.color);
+      $username.css('opacity', 0);
+      $username.text(user.username + '\'s');
+      $username.animate({'opacity': 1});
+      $menu.stop().fadeIn();
     });
   };
 
   // Update UI for logout.
   function logoutUI() {
-    // TODO
-    $('#sms_field').val('');
-    $('#email_field').val('');
-    logged_in = false;
-    $('#sadness').hide();
+    selectedColor = RED;
+    loggedIn = false;
+    changeCount(ORIGINAL_COUNT);
+    $('.sms.field').val('');
+    $('.email.field').val('');
+    $menu.stop().fadeOut(function() {
+      $login.stop().fadeIn();
+    });
   };
 
   function logout() {
-    $.post('/leave', { color: selected_color });
+    $.post('/leave', { color: selectedColor });
     $.post('/logout', function() {
       logoutUI();
     });
   };
 
-  $('#logout').click(function() {
+  $('a.logout').click(function() {
     logout();
   });
 
@@ -87,11 +145,9 @@ $(document).ready(function() {
     }, function(res) {
       if (res.user) {
         if (active == 'register') {
-          //loginUI(res.user[0]);
-          console.log('Registered');
+          loginUI(res.user[0]);
         } else {
-          //loginUI(res.user);
-          console.log('Logged in');
+          loginUI(res.user);
         }
       } else {
         $('.login-errors').text(res.err);
@@ -102,67 +158,67 @@ $(document).ready(function() {
     return false;
   });
 
+  $('.happiness.form').submit(function(ev) {
+    ev.preventDefault();
 
-  /** Add a happy! */
-  $('#add').click(function() {
-    if (!logged_in) {
-      $('.warn').text('You\'re not logged in, so any happinesses you. save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
-      $('.warn').slideDown();
-    }
-    // TODO
-  });
-
-
-  $('#sad').click(function() {
-    $('#add_happiness').hide();
-    var el = $('#bubble');
-    var newone = el.clone(true);
-    el.before(newone);
-    el.remove();
-    $.get('/random_happy', function(res) {
-      if (res.happiness) {
-        $('#date').text(res.date);
-        $('#message').text(res.happiness);
-        $('#sadness').stop().fadeIn();
-      } else {
-        $('#date').text('Oh no...');
-        $('#message').text('you haven\'t added any happinesses. Just consider the bad times down payment for the good ones :).');
-        $('#sadness').stop().fadeIn();
-      }
-    });
-  });
-
-  /** Add happiness online */
-  $('#add').click(function() {
-    $('#settings').hide();
-    $('#sadness').hide();
-    $('#add_happiness').show();
-    $('#message_field').focus();
-  });
-
-  /** Handle happiness. */
-  $('#form_happiness').submit(function() {
-    var msg = $('#message_field').val();
-    if (msg) {
-      $.post('/happy', { message: msg }, function(res) {
-        $('#add_happiness').stop().fadeOut();
+    var $message = $(this).find('input[name=message]');
+    var message = $message.val();
+    if (message) {
+      $.post('/happy', {
+        message: message,
+      }, function(res) {
+        $happiness.stop().fadeOut('fast');
         if (!res.err) {
-          var new_count = parseInt($('#number').text()) + 1;
-          $('#number').text(new_count);
-          $('#message_field').val('');
+          $message.val('');
+          var $newBubble = $bubble.clone(true);
+          $bubble.before($newBubble);
+          $bubble.remove();
+          $bubble = $newBubble;
           setTimeout(function() {
-            $('#moving').stop().animate({ 'height': Math.min(100, Math.round((35 + new_count) / 200 * 100)) + '%' });
-          }, 500);
+            var height = $liquid.css('height');
+            // TODO
+            var increment = loggedIn ? 1 : 3;
+            changeCount(currentCount + increment);
+          }, 300);
         }
       });
     }
+
     return false;
   });
 
 
+  /** Add a happy! */
+  $('.lid').click(function() {
+    if (!loggedIn) {
+      $('.warn').text('You\'re not logged in, so any happinesses you. save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
+      $('.warn').slideDown();
+    }
+    $happiness.stop().fadeIn('fast');
+    $('input[name=message]').focus();
+  });
+
+
+  $('a.sad').click(function() {
+    $.get('/random_happy', function(res) {
+      if (res.happiness) {
+        $('.happy-date').text(res.date);
+        $('.happy-message').text(res.happiness);
+      } else {
+        $('.happy-date').text('Oh no...');
+        $('.happy-message').text('we couldn\'t find any happinesses. Just consider the bad times down payment for the good ones :).');
+      }
+    });
+  });
+
+
+  $('.menu .logout').click(function() {
+    logout();
+  });
+
   /** Save color before exiting */
   window.onbeforeunload = function() {
-    if (logged_in) {
+    if (loggedIn) {
       $.post('/leave', { color: selected_color });
     }
   };

@@ -113,22 +113,15 @@ app.post('/logout', function(req, res) {
 
 // Retrieves a random happiness for the user, else return generic.
 app.get('/random_happy', function(req, res) {
-  if (req.session.username === undefined) {
-    res.send(401);
-    return;
-  }
-  happies().find({ username: req.session.username }).toArray(function(err, h) {
+  happies().find({username: req.session.username || ''}).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {
         var hh = h[Math.floor(Math.random() * h.length)];
         var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
-        res.send({ happiness: hh.message, date: date });
-      } else {
-        res.send({happiness: "You haven't put anything in your jar yet!", date: ':('});
+        res.send({happiness: hh.message, date: date});
       }
-    } else {
-      res.send({err: 'Nothing found'});
     }
+    res.send({err: 'Nothing found'});
   });
 });
 

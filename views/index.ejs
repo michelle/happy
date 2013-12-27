@@ -17,7 +17,9 @@
     <div class="seven"></div>
   </div>
 </div>
+
 <div class="snows">
+  <a class="sad">:(</a>
   <div class="snow middle">
     <div class="clump">
       <div class="one"></div>
@@ -89,30 +91,47 @@
     </div>
   </div>
 
-  </div>
 </div>
 
-<div class="wrapper">
+<div class="top">
+  <div class="wrapper">
+    <div class="title">
+      <div class="username"></div>
+      <div class="hj">happiness jar</div>
+      <div id="number">10</div>
+    </div>
 
-  <div class="title">
-    <div class="username"></div>
-    <div class="hj">happiness jar</div>
+    <%- partial('partials/login') %>
+    <%- partial('partials/settings') %>
+  </div>
+</div>
+<div class="top-background"></div>
+
+<div class="wrapper">
+  <div class="menu">
+    <a class="settings">Settings</a>
+    <a class="logout">Logout<a>
   </div>
 
-  <%- partial('partials/login') %>
-
-  <div class="lid"></div>
-    <div class="bubble long"></div>
+  <div class="bubble long up"></div>
+  <div class="lid">add a happiness</div>
   <div class="jar">
     <div class="liquid animated shake">
-      <div class="bubble short up"></div>
     </div>
   </div>
 
+  <div id="happiness">
+    <form class="happiness form">
+      <input class="field" name="message" type="text" required>
+      <a class="close button">close</a>
+      <input type="submit" class="button" value="save (:">
+    </form>
+  </div>
+
 </div>
 
 
-<div id="instructions">
+<!--div id="instructions">
 <div id="instructionscontainer">
 <button id="show_instructions">What is this?</button>
 <div id="hidden_instructions">
@@ -137,7 +156,7 @@
   <button class="close">close</button>
   </div>
 </div>
-</div>
+</div-->
 
 <!--div id="footer">
   <div id="footercontainer">
