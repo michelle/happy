@@ -83,7 +83,9 @@ $(document).ready(function() {
   /**
    * SETTINGS
    */
-  $('.settings.form').submit(function() {
+  $('.settings.form').submit(function(ev) {
+    ev.preventDefault();
+
     var sms = $(this).find('input[name=sms]').val();
     var email = $(this).find('input[name=email]').val();
     if (sms !== user.sms || email != user.email) {
@@ -102,7 +104,6 @@ $(document).ready(function() {
     } else {
       $settings.stop().hide();
     }
-    return false;
   });
 
   $happiness.on('click', '.close', function() {
@@ -184,7 +185,9 @@ $(document).ready(function() {
     $instructions.stop().toggle();
   });
 
-  $('.login.form').submit(function() {
+  $('.login.form').submit(function(ev) {
+    ev.preventDefault();
+
     var url = active === 'login' ? '/login' : '/register';
     $.post(url, {
       username: $(this).find('input[name=username]').val(),
@@ -202,8 +205,6 @@ $(document).ready(function() {
         $('.login-errors').slideDown();
       }
     });
-
-    return false;
   });
 
   $('.happiness.form').submit(function(ev) {
@@ -228,8 +229,6 @@ $(document).ready(function() {
         }
       });
     }
-
-    return false;
   });
 
 
