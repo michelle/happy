@@ -27,6 +27,8 @@ var currentCount = ORIGINAL_COUNT;
 
 $(document).ready(function() {
   var loggedIn = false;
+  var queued = [];
+
   var $liquid = $('.liquid');
   var $liquidAndNumber = $('.liquid, #number');
   var $number = $('#number');
@@ -71,6 +73,16 @@ $(document).ready(function() {
     $bubble.before($newBubble);
     $bubble.remove();
     $bubble = $newBubble;
+  }
+
+  function flushQueue() {
+    for (var i = 0, ii = queued.length; i < ii; i += 1) {
+      var message = queued[i];
+      $.post('/happy', {
+        message: message,
+      })
+    }
+    queued = [];
   }
 
 
@@ -123,6 +135,8 @@ $(document).ready(function() {
    */
   // Update UI for login.
   function loginUI(user) {
+    user.happiness += queued.length;
+    flushQueue();
     loggedIn = true;
     // TODO
     if (user.email) {
@@ -135,7 +149,7 @@ $(document).ready(function() {
       $login.find('input[name=username]').val('');
       $login.find('input[name=password]').val('');
       $('.login-errors').hide();
-      changeCount(user.happiness, user.color);
+      changeCount(user.happiness || 0, user.color);
       $username.css('opacity', 0);
       $username.text(user.username + '\'s');
       $username.animate({'opacity': 1});
@@ -212,23 +226,32 @@ $(document).ready(function() {
   $('.happiness.form').submit(function(ev) {
     ev.preventDefault();
 
+    function complete(error) {
+      $happiness.stop().hide();
+      if (!error) {
+        $message.val('');
+        unleashBubble();
+        setTimeout(function() {
+          var height = $liquid.css('height');
+          // TODO
+          var increment = loggedIn ? 1 : 3;
+          changeCount(currentCount + increment);
+        }, 300);
+      }
+    }
+
     var $message = $(this).find('input[name=message]');
     var message = $message.val();
     if (message) {
+      if (!loggedIn) {
+        queued.push(message);
+        complete();
+        return;
+      }
       $.post('/happy', {
         message: message,
       }, function(res) {
-        $happiness.stop().hide();
-        if (!res.err) {
-          $message.val('');
-          unleashBubble();
-          setTimeout(function() {
-            var height = $liquid.css('height');
-            // TODO
-            var increment = loggedIn ? 1 : 3;
-            changeCount(currentCount + increment);
-          }, 300);
-        }
+        complete(res.err);
       });
     }
   });
@@ -236,11 +259,6 @@ $(document).ready(function() {
 
   /** Add a happy! */
   $('.lid').click(function() {
-    if (!loggedIn) {
-      // TODO! WARN
-      /*$('.warn').text('You\'re not logged in, so any happinesses you. save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
-      $('.warn').slideDown();*/
-    }
     $happiness.stop().show();
     $('input[name=message]').focus();
   });
