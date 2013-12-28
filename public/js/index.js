@@ -86,8 +86,8 @@ $(document).ready(function() {
   }
 
 
-  if (user) {
-    loginUI(user);
+  if (currentUser) {
+    loginUI(currentUser);
   } else {
     logoutUI();
   }
@@ -135,6 +135,7 @@ $(document).ready(function() {
    */
   // Update UI for login.
   function loginUI(user) {
+    currentUser = user;
     user.happiness += queued.length;
     flushQueue();
     loggedIn = true;

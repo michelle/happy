@@ -1,8 +1,8 @@
 <script>
-  <% if (!!user) { %>
-    var user = <%-user%>;
+  <% if (user) { %>
+    var currentUser = <%-user%>;
   <% } else { %>
-    var user = null;
+    var currentUser = null;
   <% } %>
 </script>
 
