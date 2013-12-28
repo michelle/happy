@@ -101,6 +101,21 @@
       <div id="number">10</div>
     </div>
 
+  <div id="instructions">
+    <p>
+    </p>
+    <p>
+    <strong>This is your happiness jar.</strong> Use it to remember every
+    happy moment this year.
+    </p>
+    <p>
+    Give us your <strong>phone number</strong> and we'll store every text you send us in your
+    jar. Give us your <strong>email address</strong> and at the end of the year happy memories will fill
+    your inbox. We all just need a little reminder of what makes us happy.
+    </p>
+    <a class="close">close</a>
+  </div>
+
     <%- partial('partials/login') %>
     <%- partial('partials/settings') %>
   </div>
@@ -108,9 +123,16 @@
 <div class="top-background"></div>
 
 <div class="wrapper">
+
+
   <div class="menu">
-    <a class="settings">Settings</a>
-    <a class="logout">Logout<a>
+    <div id="sadness">
+      "<span class="happy-message"></span>"
+    </div>
+    <span class="logged-in-items">
+      <a class="settings">Settings</a>
+      <a class="logout">Logout<a>
+    </span>
   </div>
 
   <div class="bubble long up"></div>
@@ -128,52 +150,20 @@
     </form>
   </div>
 
+
 </div>
 
 
-<!--div id="instructions">
-<div id="instructionscontainer">
-<button id="show_instructions">What is this?</button>
-<div id="hidden_instructions">
-  <p>
-  Sometimes we get carried away with the big 'important' things in life and forget how
-  many happy minutes and seconds we have had.
-  </p>
-  <p>
-  <strong>This is your happiness jar.</strong> Use it to keep track of every bubble bath you
-  take, every puppy you pet. Use it to retrieve sweetness when you're a bit
-  sour.
-  </p>
-  <p>
-  Give us your <strong>phone number</strong> and we'll store every text you send us in your
-  jar. Give us your <strong>email address</strong> and at the end of the year happy memories will fill
-  your inbox.
-  </p>
-  <p>
-  And of course, a silly quote on the topic from Simon and Garfunkel:
-  <strong>"I've got nothing to do today but smile."</strong>
-  </p>
-  <button class="close">close</button>
-  </div>
-</div>
-</div-->
-
-<!--div id="footer">
-  <div id="footercontainer">
+<div id="footer">
+  <div class="wrapper">
     <div id="colors">
-      <div id="red" class="color red selected"></div>
-      <div id="orange" class="color orange"></div>
-      <div id="yellow" class="color yellow"></div>
-      <div id="green" class="color green"></div>
-      <div id="blue" class="color blue"></div>
-      <div id="violet" class="color violet"></div>
-      <div id="white" class="color white"></div>
+      <div class="red"></div><div class="yellow"></div><div class="green"></div><div class="blue"></div><div class="purple"></div>
     </div>
     <div id="tagline">
-      <a href="mailto:michelle@michellebu.com">feedback</a>
+      <a class="instructions">why?</a>
+      <a href="mailto:michelle@michellebu.com">help!</a>
       <a href="https://github.com/michellebu/happy">github</a>
-      <a class="instructions">instructions</a>
     </div>
   </div>
-</div-->
+</div>
 

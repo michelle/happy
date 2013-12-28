@@ -291,7 +291,7 @@ body, html {
   z-index: 2;
 }
 
-.title, .snows, .lid {
+.title, .snows, .lid, .logged-in-items {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
   -khtml-user-select: none;
@@ -311,7 +311,7 @@ body, html {
   padding: 10px;
   width: 25px;
   height: 25px;
-  color: rgba(255,255,255,0.8);
+  color: rgba(0,0,0,0.3);
   border: 1px solid rgba(0,0,0,0.1);
   border-radius: 50px;
   z-index: 1;
@@ -456,8 +456,72 @@ body, html {
   top: 95px;
 }
 
-#settings{
-  top: 100px;
+#settings {
+  top: 110px;
+  width: 200px;
+  background-color: #7f9d7a;
+  border-radius: 5px;
+  box-sizing: border-box;
+  font-size: 14px;
+
+  overflow: hidden;
+  color: #366464;
+
+  -webkit-box-shadow: 0 1px 100px #92ae8d;
+  -moz-box-shadow: 0 1px 100px #92ae8d;
+  box-shadow: 0 1px 100px #92ae8d;
+}
+
+.settings-error a {
+  color: #366464;
+}
+
+#settings label {
+  font-size: 12px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.2);
+  color: #143e53;
+  letter-spacing: 1px;
+}
+
+#settings .phone {
+  color: #b34246;
+}
+
+#settings .field {
+  padding: 6px 9px;
+  margin: 0;
+  border-radius: 0;
+}
+
+#settings label {
+  display: block;
+  padding: 6px 9px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-width: 0 1px 1px 1px;
+}
+
+#settings .button {
+  display: block;
+  width: 100%;
+  margin: 0;
+  background-color: #f4bc63;
+  color: #c18525;
+  border-radius: 0 0 5px 5px;
+  border: 1px solid rgba(0,0,0,0.1);
+  border-width: 0 1px 1px 1px;
+}
+
+#settings .button:hover {
+  background-color: #f4d063;
+}
+
+.settings-error {
+  display: none;
+
+  padding: 10px;
+  background-color: #a1bd88;
+  font-size: 12px;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.3);
 }
 
 .menu {
@@ -466,7 +530,7 @@ body, html {
   width: 152px;
 }
 
-.menu a {
+.menu a, .menu #sadness {
   font-size: 14px;
   font-variant: small-caps;
   text-transform: lowercase;
@@ -474,6 +538,15 @@ body, html {
   display: block;
   color: #e8f4d8;
   cursor: pointer;
+}
+
+.menu #sadness {
+  display: none;
+  cursor: default;
+  border-bottom: 1px dotted #e8f4d8;
+  padding-bottom: 5px;
+  margin-bottom: 4px;
+  text-align: center;
 }
 
 .menu a:hover {
@@ -598,6 +671,7 @@ input, button {
   text-align: right;
 }
 
+
 #happiness {
   display: none;
   position: absolute;
@@ -633,4 +707,116 @@ input, button {
 }
 
 
+
+#footer {
+  position: absolute;
+  bottom: 0px;
+  z-index: 101;
+  font-variant: small-caps;
+  letter-spacing: 1px;
+  font-size: 14px;
+}
+
+#tagline {
+  position: absolute;
+  left: 10px;
+  bottom: 25px;
+}
+
+#tagline a {
+  color: #7f9d7a;
+  cursor: pointer;
+}
+
+#tagline a:hover {
+  color: #366464;
+}
+
+#colors {
+  position: absolute;
+  left: 10px;
+  bottom: 0px;
+  height: 20px;
+}
+
+#colors div {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  opacity: 0.7;
+  cursor: pointer;
+  margin: 2px;
+}
+
+#colors div:hover {
+  opacity: 1;
+}
+
+.red {
+  background-color: #d64f42;
+}
+
+.yellow {
+  background-color: #EBDB8C;
+}
+
+.green {
+  background-color: #a1bd88;
+}
+
+.blue {
+  background-color: #6D9FB6;
+}
+
+.purple {
+  background-color: #a2676c;
+}
+
+
+#instructions {
+  display: none;
+  position: absolute;
+  right: 0px;
+  top: 110px;
+  width: 200px;
+  z-index: 102;
+  background-color: #143e53;
+  color: #98bcc8;
+  box-sizing: border-box;
+  border-radius: 5px;
+  max-height: 350px;
+  font-size: 14px;
+  -webkit-box-shadow: 0 1px 100px #92ae8d;
+  -moz-box-shadow: 0 1px 100px #92ae8d;
+  box-shadow: 0 1px 100px #92ae8d;
+  padding-top: 9px;
+  opacity: 0.9;
+}
+
+
+#instructions strong {
+  font-weight: normal;
+  color: #fff;
+}
+
+#instructions p {
+  margin: 6px;
+  padding: 0 9px;
+}
+
+#instructions .close {
+  display: block;
+  width: 100%;
+  background-color: #0a2938;
+  border-radius: 0 0 5px 5px;
+  text-align: center;
+  padding: 6px 9px;
+  box-sizing: border-box;
+  font-variant: small-caps;
+  cursor: pointer;
+}
+
+#instructions .close:hover {
+  background-color: #152a34;
+}
 

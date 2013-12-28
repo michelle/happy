@@ -3,13 +3,23 @@ function encodeHTML(s) {
 }
 
 var RED = '#d64f42';
-var ORANGE = '#f4bc63';
 var GREEN = '#a1bd88';
 var YELLOW = '#EBDB8C';
 var BLUE = '#6D9FB6';
 var PURPLE = '#a2676c';
+
 var ORIGINAL_COUNT = 80;
+var ORANGE = '#f4bc63';
 var DULL = '#96797a';
+var DARK = '#505a56';
+
+var COLORS = {
+  red: RED,
+  yellow: YELLOW,
+  green: GREEN,
+  blue: BLUE,
+  purple: PURPLE
+};
 
 var active = 'login';
 var selectedColor = RED;
@@ -18,20 +28,26 @@ var currentCount = ORIGINAL_COUNT;
 $(document).ready(function() {
   var loggedIn = false;
   var $liquid = $('.liquid');
+  var $liquidAndNumber = $('.liquid, #number');
   var $number = $('#number');
   var $bubble = $('.bubble.up');
 
   var $menu = $('.menu');
   var $login = $('#login');
   var $happiness = $('#happiness');
+  var $sadness = $('#sadness');
+  var sadTime;
   var $username = $('.username');
+  var $settings = $('#settings');
+  var $colors = $('#colors');
+  var $instructions = $('#instructions');
 
   function changeCount(number, color) {
     currentCount = number;
     var height = Math.min(100, Math.round(number / 200 * 100)) + '%';
     if (loggedIn) {
       $number.text(number);
-      $number.show();
+      $number.stop().show();
     }
     $liquid.stop().animate({height: height, backgroundColor: ORANGE}, function() {
       changeColor(color || selectedColor);
@@ -40,10 +56,22 @@ $(document).ready(function() {
 
   function changeColor(color) {
     selectedColor = color;
-    $liquid.stop().animate({backgroundColor: color});
-    $number.stop().animate({backgroundColor: color});
+    $liquidAndNumber.stop().animate({backgroundColor: color});
   }
-  change = changeColor;
+
+  function flashColor(color) {
+    $liquidAndNumber.stop().animate({backgroundColor: color}, function() {
+      $liquidAndNumber.stop().animate({backgroundColor: selectedColor});
+    });
+  }
+  window.flashColor = flashColor;
+
+  function unleashBubble() {
+    var $newBubble = $bubble.clone(true);
+    $bubble.before($newBubble);
+    $bubble.remove();
+    $bubble = $newBubble;
+  }
 
 
   if (user) {
@@ -55,30 +83,39 @@ $(document).ready(function() {
   /**
    * SETTINGS
    */
-  // TODO Resets the settings handler.
   $('.settings.form').submit(function() {
-    sendSettings(function(res) {
-      if (!res.err) {
-        $('#settings').stop().fadeOut();
-      }
-    });
+    var sms = $(this).find('input[name=sms]').val();
+    var email = $(this).find('input[name=email]').val();
+    if (sms !== user.sms || email != user.email) {
+      $.post('/save', {
+        sms: sms,
+        email: email
+      }, function(res) {
+        if (!res.err) {
+          $settings.stop().hide();
+          flashColor(ORANGE);
+        } else {
+          $('.settings-error').show();
+          flashColor(DARK);
+        }
+      });
+    } else {
+      $settings.stop().hide();
+    }
     return false;
   });
 
   $happiness.on('click', '.close', function() {
-    $happiness.stop().fadeOut('fast');
-  })
+    $happiness.stop().hide();
+  });
 
-  // Send a new set of settings to the user.
-  function sendSettings(cb) {
-    // TODO: maybe preprocess?
-    $.post('/save', {
-      sms: $('#sms_field').val(),
-      email: $('#email_field').val(),
-    }, function(res) {
-      cb(res);
-    });
-  };
+  $instructions.on('click', '.close', function() {
+    $instructions.stop().hide();
+  });
+
+  $colors.on('click', 'div', function(ev) {
+    changeColor(COLORS[$(ev.target).attr('class')]);
+  });
 
   /**
    * LOGIN/LOGOUT
@@ -88,10 +125,10 @@ $(document).ready(function() {
     loggedIn = true;
     // TODO
     if (user.email) {
-      $('.email.field').val(encodeHTML(user.email));
+      $settings.find('input[name=email]').val(encodeHTML(user.email));
     }
     if (user.sms) {
-      $('.sms.field').val(encodeHTML(user.sms));
+      $settings.find('input[name=sms]').val(encodeHTML(user.sms));
     }
     $login.stop().fadeOut(function() {
       $('.login-errors').hide();
@@ -105,11 +142,13 @@ $(document).ready(function() {
 
   // Update UI for logout.
   function logoutUI() {
-    selectedColor = RED;
     loggedIn = false;
+    selectedColor = RED;
     changeCount(ORIGINAL_COUNT);
     $('.sms.field').val('');
     $('.email.field').val('');
+    $number.stop().hide();
+    $username.text('');
     $menu.stop().fadeOut(function() {
       $login.stop().fadeIn();
     });
@@ -122,8 +161,11 @@ $(document).ready(function() {
     });
   };
 
-  $('a.logout').click(function() {
+  $menu.on('click', 'a.logout', function() {
     logout();
+  });
+  $menu.on('click', 'a.settings', function() {
+    $settings.stop().show();
   });
 
   // Toggle login form.
@@ -136,6 +178,9 @@ $(document).ready(function() {
     $('.button.login, a.register').addClass('hidden');
     $('.button.register, a.login').removeClass('hidden');
     active = 'register';
+  });
+  $('a.instructions').click(function() {
+    $instructions.stop().toggle();
   });
 
   $('.login.form').submit(function() {
@@ -168,13 +213,10 @@ $(document).ready(function() {
       $.post('/happy', {
         message: message,
       }, function(res) {
-        $happiness.stop().fadeOut('fast');
+        $happiness.stop().hide();
         if (!res.err) {
           $message.val('');
-          var $newBubble = $bubble.clone(true);
-          $bubble.before($newBubble);
-          $bubble.remove();
-          $bubble = $newBubble;
+          unleashBubble();
           setTimeout(function() {
             var height = $liquid.css('height');
             // TODO
@@ -192,38 +234,47 @@ $(document).ready(function() {
   /** Add a happy! */
   $('.lid').click(function() {
     if (!loggedIn) {
-      $('.warn').text('You\'re not logged in, so any happinesses you. save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
-      $('.warn').slideDown();
+      // TODO! WARN
+      /*$('.warn').text('You\'re not logged in, so any happinesses you. save will be mixed in with every other anon\'s! Log in to save your own happiness. :)');
+      $('.warn').slideDown();*/
     }
-    $happiness.stop().fadeIn('fast');
+    $happiness.stop().show();
     $('input[name=message]').focus();
   });
 
 
   $('a.sad').click(function() {
+    flashColor(DULL);
+
+    if (!loggedIn) {
+      return;
+    }
+
     $.get('/random_happy', function(res) {
+
+      // WHAT *TODO* WITH DATE??
       if (res.happiness) {
-        $('.happy-date').text(res.date);
         $('.happy-message').text(res.happiness);
       } else {
-        $('.happy-date').text('Oh no...');
-        $('.happy-message').text('we couldn\'t find any happinesses. Just consider the bad times down payment for the good ones :).');
+        $('.happy-message').text('We couldn\'t find any happinesses. Just consider the bad times down payment for the good ones :).');
       }
-      $liquid.stop().animate({backgroundColor: DULL}, function() {
-        $liquid.stop().animate({backgroundColor: selectedColor});
-      });
+
+      $sadness.fadeIn();
+      if (sadTime !== undefined) {
+        clearTimeout(sadTime);
+      }
+      sadTime = setTimeout(function() {
+        sadTime = undefined;
+        $sadness.fadeOut();
+        unleashBubble();
+      }, 5000);
     });
-  });
-
-
-  $('.menu .logout').click(function() {
-    logout();
   });
 
   /** Save color before exiting */
   window.onbeforeunload = function() {
     if (loggedIn) {
-      $.post('/leave', { color: selected_color });
+      $.post('/leave', { color: selectedColor });
     }
   };
 

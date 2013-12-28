@@ -1,13 +1,16 @@
 <div id="settings">
+  <div class="settings-error">
+    Uh oh! An unexpected error has occurred. <a
+    href="mailto:michelle+jar@michellebu.com">Bug me to fix it!</a>
+  </div>
   <form class="settings form">
-    <label for="email_field"><strong>Email</strong> so you can
-    receive an end-of-year email of all of your happinesses.</label>
-    <input type="email" name="email" class="field" id="email_field">
-    <label for="sms_field"><strong>Texting number</strong> - text
-    <span class="phone">(662) 626-2013</span> from the number you enter to send
+    <input type="email" name="email" placeholder="email address" class="field" id="email_field">
+    <label for="email_field">So we can send
+    you your happinesses at the end of the year.</label>
+    <input type="tel" id="sms_field" placeholder="texting number" class="field" name="sms">
+    <label for="sms_field">Text <span class="phone">(662) 626-2013</span> from
+    the number you enter above to send
     happiness via mobile.</label>
-    <input type="tel" id="sms_field" class="field" name="sms">
-    <input type="submit" class="button" value="save">
-    <a class="close button">close</a>
+    <input type="submit" class="button" value="done">
   </form>
 </div>
