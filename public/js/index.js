@@ -132,6 +132,8 @@ $(document).ready(function() {
       $settings.find('input[name=sms]').val(encodeHTML(user.sms));
     }
     $login.stop().fadeOut(function() {
+      $login.find('input[name=username]').val('');
+      $login.find('input[name=password]').val('');
       $('.login-errors').hide();
       changeCount(user.happiness, user.color);
       $username.css('opacity', 0);
