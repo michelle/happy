@@ -11,317 +11,6 @@ var bcrypt = require('bcrypt');
 // Temporary lost password links.
 var lostUsers = {};
 
-// Filtered from jQuery.ProfanityFilter
-var SWEAR_WORDS = [ "2g1c",
-  "2 girls 1 cup",
-  "acrotomophilia",
-  "anal",
-  "anilingus",
-  "anus",
-  "arsehole",
-  "assmunch",
-  "auto erotic",
-  "autoerotic",
-  "baby batter",
-  "ball gag",
-  "ball gravy",
-  "ball kicking",
-  "ball licking",
-  "ball sack",
-  "ball sucking",
-  "bangbros",
-  "bareback",
-  "barely legal",
-  "bbw",
-  "bdsm",
-  "beaver cleaver",
-  "beaver lips",
-  "bestiality",
-  "bi curious",
-  "big breasts",
-  "big knockers",
-  "big tits",
-  "bimbos",
-  "birdlock",
-  "bitch",
-  "black cock",
-  "blow j",
-  "blow your l",
-  "bondage",
-  "boner",
-  "boob",
-  "boobs",
-  "booty call",
-  "brown showers",
-  "brunette action",
-  "bukkake",
-  "bulldyke",
-  "bullet vibe",
-  "bung hole",
-  "bunghole",
-  "busty",
-  "buttcheeks",
-  "butthole",
-  "camel toe",
-  "carpet muncher",
-  "carpetmuncher",
-  "chocolate rosebuds",
-  "circlejerk",
-  "clit",
-  "clitoris",
-  "clover clamps",
-  "clusterfuck",
-  "cock",
-  "cocks",
-  "coprolagnia",
-  "coprophilia",
-  "cornhole",
-  "cum",
-  "cumming",
-  "cunnilingus",
-  "cunt",
-  "darkie",
-  "date rape",
-  "daterape",
-  "deep throat",
-  "deepthroat",
-  "dick",
-  "dildo",
-  "dirty pillows",
-  "dirty sanchez",
-  "dog style",
-  "doggie style",
-  "doggiestyle",
-  "doggy style",
-  "doggystyle",
-  "dolcett",
-  "domination",
-  "dominatrix",
-  "dommes",
-  "donkey punch",
-  "double dong",
-  "double penetration",
-  "dp action",
-  "eat my ass",
-  "ejaculation",
-  "erotic",
-  "erotism",
-  "ethical slut",
-  "eunuch",
-  "faggot",
-  "felch",
-  "fellatio",
-  "feltch",
-  "female squirting",
-  "femdom",
-  "figging",
-  "fingering",
-  "fisting",
-  "foot fetish",
-  "footjob",
-  "frotting",
-  "fuck",
-  "fuck buttons",
-  "fudge packer",
-  "fudgepacker",
-  "futanari",
-  "g-spot",
-  "gang bang",
-  "gay sex",
-  "genitals",
-  "giant cock",
-  "girl on top",
-  "gonewild",
-  "gone wild",
-  "goatcx",
-  "goatse",
-  "gokkun",
-  "golden shower",
-  "goo girl",
-  "goregasm",
-  "grope",
-  "group sex",
-  "guro",
-  "hand job",
-  "handjob",
-  "hentai",
-  "homoerotic",
-  "honkey",
-  "hooker",
-  "huge fat",
-  "humping",
-  "incest",
-  "jack off",
-  "jail bait",
-  "jailbait",
-  "jerk off",
-  "jigaboo",
-  "jiggaboo",
-  "jiggerboo",
-  "jizz",
-  "juggs",
-  "kike",
-  "kinbaku",
-  "kinkster",
-  "kinky",
-  "knobbing",
-  "leather restraint",
-  "leather straight jacket",
-  "lemon party",
-  "lemonparty",
-  "lolita",
-  "lovemaking",
-  "make me cum",
-  "male squirting",
-  "masturbate",
-  "menage a trois",
-  "milf",
-  "missionary position",
-  "motherfucker",
-  "mound of venus",
-  "muff diver",
-  "muffdiving",
-  "nambla",
-  "nawashi",
-  "neonazi",
-  "nig nog",
-  "nigga",
-  "nigger",
-  "nimphomania",
-  "nipple",
-  "nipples",
-  "nsfw images",
-  "nude",
-  "nudity",
-  "nympho",
-  "nymphomania",
-  "octopussy",
-  "omorashi",
-  "one cup two girls",
-  "one guy one jar",
-  "orgasm",
-  "orgy",
-  "paedophile",
-  "pedobear",
-  "pedophile",
-  "pegging",
-  "penis",
-  "phone sex",
-  "piece of shit",
-  "piss pig",
-  "pissing",
-  "pisspig",
-  "playboy",
-  "pleasure chest",
-  "pole smoker",
-  "ponyplay",
-  "poop chute",
-  "poopchute",
-  "porn",
-  "porno",
-  "pornography",
-  "prince albert piercing",
-  "pthc",
-  "pubes",
-  "pussy",
-  "queef",
-  "raghead",
-  "raging boner",
-  "rape",
-  "raping",
-  "rapist",
-  "rectum",
-  "reverse cowgirl",
-  "rimjob",
-  "rimming",
-  "rosy palm",
-  "rosy palm and her 5 sisters",
-  "rusty trombone",
-  "s&m",
-  "sadism",
-  "scat",
-  "schlong",
-  "scissoring",
-  "semen",
-  "sex",
-  "sexo",
-  "sexy",
-  "shaved beaver",
-  "shaved pussy",
-  "shemale",
-  "shibari",
-  "shit",
-  "shota",
-  "shrimping",
-  "slanteye",
-  "slut",
-  "smut",
-  "snatch",
-  "snowballing",
-  "sodomize",
-  "sodomy",
-  "spic",
-  "spooge",
-  "spread legs",
-  "strap on",
-  "strapon",
-  "strappado",
-  "strip club",
-  "style doggy",
-  "suicide girls",
-  "sultry women",
-  "swastika",
-  "swinger",
-  "tainted love",
-  "taste my",
-  "tea bagging",
-  "threesome",
-  "throating",
-  "tied up",
-  "tight white",
-  "tit",
-  "tits",
-  "titties",
-  "titty",
-  "tongue in a",
-  "topless",
-  "tosser",
-  "towelhead",
-  "tranny",
-  "tribadism",
-  "tub girl",
-  "tubgirl",
-  "tushy",
-  "twat",
-  "twink",
-  "twinkie",
-  "two girls one cup",
-  "undressing",
-  "upskirt",
-  "urethra play",
-  "urophilia",
-  "vagina",
-  "venus mound",
-  "vibrator",
-  "violet blue",
-  "violet wand",
-  "vorarephilia",
-  "voyeur",
-  "vulva",
-  "wank",
-  "wet dream",
-  "wetback",
-  "white power",
-  "women rapping",
-  "wrapping men",
-  "wrinkled starfish",
-  "yaoi",
-  "yellow showers",
-  "yiffy",
-  "zoophilia"
-]
-
-
 
 /**
  * User: {
@@ -358,6 +47,13 @@ function randomId() {
   return Math.random().toString(36).substr(2);
 };
 
+function loginRequired(req, res, next) {
+  if (!req.session.username) {
+    res.send(401);
+    return;
+  }
+  next();
+}
 
 
 // Initialize main server
@@ -409,37 +105,27 @@ app.post('/reset/:key', function(req, res) {
 });
 
 // Triggered when the client closes the window; saves their color choice.
-app.post('/leave', function(req, res) {
-  if (req.session.username) {
-    users.update({ username: req.session.username }, { $set: { color: req.body.color } }, {}, function() {});
-  }
-  res.send(200);
-  // Shouldn't be called without a username.
+app.post('/leave', loginRequired, function(req, res) {
+  users.update({ username: req.session.username }, { $set: { color: req.body.color } }, {}, function() {
+    res.send(200);
+  });
 });
 
 // Removes session from user on logout.
-app.post('/logout', function(req, res) {
+app.post('/logout', loginRequired, function(req, res) {
   delete req.session.username;
   res.send(200);
 });
 
-// Retrieves a random happiness for the user, else return generic.
-app.get('/random_happy', function(req, res) {
-  happies().find({username: req.session.username || ''}).toArray(function(err, h) {
+// Retrieves a random happiness for the user.
+app.get('/random_happy', loginRequired, function(req, res) {
+  happies().find({username: req.session.username}).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {
         var hh = h[Math.floor(Math.random() * h.length)];
         var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
         var message = hh.message;
 
-        // Filter out swear words if user is not logged in.
-        /*if (!req.session.username) {
-          for(var i = 0, ii = SWEAR_WORDS.length; i < ii; i += 1) {
-            var pattern = new RegExp(SWEAR_WORDS[i], 'g');
-            var replacement = new Array(SWEAR_WORDS[i].length + 1).join('*');
-            message = message.replace(pattern, replacement);
-          }
-        }*/
         res.send({happiness: message, date: date});
         return;
       }
@@ -514,9 +200,9 @@ app.post('/register', function(req, res) {
 });
 
 // Saves a happiness.
-app.post('/happy', function(req, res) {
+app.post('/happy', loginRequired, function(req, res) {
   happies().insert({
-    username: req.session.username || '',
+    username: req.session.username,
     date: new Date(),
     message: req.body.message
   }, function(err, result) {
@@ -535,7 +221,7 @@ app.post('/happy', function(req, res) {
 });
 
 // Saves user email, sms, twitter settings, errors if already used.
-app.post('/save', function(req, res) {
+app.post('/save', loginRequired, function(req, res) {
   // TODO: check to see what changed.
   var sms = req.body.sms;
   if (sms) {
@@ -611,13 +297,16 @@ app.post('/new_text', function(req, res) {
             users.update({ username: user.username },
               { $inc: { happiness: 1 } },
               {},
-              function(err) {}
+              function(err) {
+              }
             );
           }
         });
       }
     });
   }
+  // always send ok.
+  res.send(200);
 });
 
 app.listen(8009);

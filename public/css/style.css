@@ -702,6 +702,8 @@ input, button {
 
 
 
+
+/** FOOTER */
 #footer {
   position: absolute;
   bottom: 0px;
@@ -767,6 +769,7 @@ input, button {
 }
 
 
+/** INSTRUCTIONS */
 #instructions {
   display: none;
   position: absolute;
