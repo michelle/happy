@@ -145,8 +145,8 @@ $(document).ready(function() {
     loggedIn = false;
     selectedColor = RED;
     changeCount(ORIGINAL_COUNT);
-    $('.sms.field').val('');
-    $('.email.field').val('');
+    $settings.find('input[name=sms]').val('');
+    $settings.find('input[name=email]').val('');
     $number.stop().hide();
     $username.text('');
     $menu.stop().fadeOut(function() {
