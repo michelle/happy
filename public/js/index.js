@@ -100,7 +100,7 @@ $(document).ready(function() {
 
     var sms = $(this).find('input[name=sms]').val();
     var email = $(this).find('input[name=email]').val();
-    if (sms !== user.sms || email != user.email) {
+    if (sms !== currentUser.sms || email != currentUser.email) {
       $.post('/save', {
         sms: sms,
         email: email
