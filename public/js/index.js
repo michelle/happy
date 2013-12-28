@@ -136,7 +136,7 @@ $(document).ready(function() {
       $username.css('opacity', 0);
       $username.text(user.username + '\'s');
       $username.animate({'opacity': 1});
-      $menu.stop().fadeIn();
+      $menu.stop().show();
     });
   };
 
@@ -184,14 +184,15 @@ $(document).ready(function() {
   });
 
   $('.login.form').submit(function() {
-    var url = active == 'login' ? '/login' : '/register';
+    var url = active === 'login' ? '/login' : '/register';
     $.post(url, {
       username: $(this).find('input[name=username]').val(),
       password: $(this).find('input[name=password]').val()
     }, function(res) {
       if (res.user) {
-        if (active == 'register') {
+        if (active === 'register') {
           loginUI(res.user[0]);
+          $settings.stop().show();
         } else {
           loginUI(res.user);
         }
