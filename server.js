@@ -294,6 +294,10 @@ app.post('/happy', loginRequired, function(req, res) {
   });
 });
 
+app.post('/ignore', loginRequired, function(req, res) {
+  res.send(200);
+});
+
 // Saves user email, sms, twitter settings, errors if already used.
 app.post('/save', loginRequired, function(req, res) {
   if (req.body.email && !validateEmail(req.body.email)) {
@@ -409,7 +413,7 @@ app.post('/new_text', function(req, res) {
             if (!err) {
               request({
                 method: 'POST',
-                url: 'https://www.gvmax.com/api/send',
+                url: 'http://happinessjar.com/ignore',
                 form: {
                   callbackUrl: 'http://requestb.in/1lc43dh1',
                   pin: '40d1165fdb6442e3be3f3a4d1d3f8dec',
@@ -418,7 +422,8 @@ app.post('/new_text', function(req, res) {
                 }
               }, function(err, msg, response) {
                 // TODO: figure out how to handle these.
-                console.log(err, msg, response);
+                // For now we're just assuming success.
+                console.log(err);
               });
             }
           });
