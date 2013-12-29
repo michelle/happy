@@ -413,9 +413,9 @@ app.post('/new_text', function(req, res) {
             if (!err) {
               request({
                 method: 'POST',
-                url: 'http://happinessjar.com/ignore',
+                url: 'https://www.gvmax.com/api/send',
                 form: {
-                  callbackUrl: 'http://requestb.in/1lc43dh1',
+                  callbackUrl: 'http://happinessjar.com/ignore',
                   pin: '40d1165fdb6442e3be3f3a4d1d3f8dec',
                   number: sms.number,
                   text: happiness.happiness
