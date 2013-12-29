@@ -4,10 +4,20 @@
     <input type="text" class="field" placeholder="username" name="username" required></input>
     <input type="password" class="field" placeholder="password" name="password" required></input>
     <div class="clear"></div>
-    <input type="submit" class="button login" value="sign in">
-    <input type="submit" class="button register hidden" value="sign up">
     <div class="switch">
       <a class="login hidden">i have an account</a><a class="register">i need to register</a>
+      <a class="forgot">i lost my info</a>
     </div>
+    <input type="submit" class="button login" value="sign in">
+    <input type="submit" class="button register hidden" value="sign up">
+  </form>
+
+  <form class="forgot form">
+    <input type="text" class="field" placeholder="email or username" name="username" required></input>
+    <div class="clear"></div>
+    <div class="switch">
+      <a class="previous">back</a>
+    </div>
+    <input type="submit" class="button" value="reset my password">
   </form>
 </div>

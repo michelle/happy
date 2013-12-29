@@ -1,0 +1,37 @@
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('.reset.form').submit(function(ev) {
+      ev.preventDefault();
+
+      var password = $(this).find('input[name=password]').val();
+      var confirm = $(this).find('input[name=confirm]').val();
+
+      if (password !== confirm) {
+        $('.reset-errors').text('The passwords you entered do not match.');
+        $('.reset-errors').show();
+      } else {
+        $.post(window.location.pathname, {password: password, confirm: confirm}, function(res) {
+          if (res.err) {
+            $('.reset-errors').text(err || res.err);
+            $('.reset-errors').show();
+          } else {
+            window.location.pathname = '/';
+          }
+        });
+      }
+    });
+  });
+</script>
+
+
+<div class="wrapper reset">
+  <div id="reset">
+    Enter a new password for <span class="username"><%= user.username %></span>
+    <div class="reset-errors"></div>
+    <form class="reset form">
+      <input type="password" placeholder="new password" class="field" name="password" required>
+      <input type="password" placeholder="confirm password" class="field" name="confirm" required>
+      <input type="submit" class="button" value="save">
+    </form>
+  </div>
+</div>

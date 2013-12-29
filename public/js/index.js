@@ -2,6 +2,11 @@ function encodeHTML(s) {
   return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 }
 
+function validateEmail(email) {
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
+
 var RED = '#d64f42';
 var GREEN = '#a1bd88';
 var YELLOW = '#EBDB8C';
@@ -44,6 +49,9 @@ $(document).ready(function() {
   var $colors = $('#colors');
   var $instructions = $('#instructions');
 
+  var $loginForm = $('.login.form');
+  var $forgot = $('.forgot.form');
+
   function changeCount(number, color) {
     currentCount = number;
     var height = Math.min(100, Math.round(number / 200 * 100)) + '%';
@@ -59,6 +67,11 @@ $(document).ready(function() {
   function changeColor(color) {
     selectedColor = color;
     $liquidAndNumber.stop().animate({backgroundColor: color});
+  }
+
+  function hideSettings() {
+    $settings.stop().hide();
+    $('.settings-error').stop().hide();
   }
 
   function flashColor(color) {
@@ -85,6 +98,12 @@ $(document).ready(function() {
     queued = [];
   }
 
+  function backToLogin() {
+    $forgot.hide();
+    $('.login-errors').stop().hide();
+    $loginForm.show();
+  }
+
 
   if (currentUser) {
     loginUI(currentUser);
@@ -100,21 +119,30 @@ $(document).ready(function() {
 
     var sms = $(this).find('input[name=sms]').val();
     var email = $(this).find('input[name=email]').val();
+
+    if (email && !validateEmail(email)) {
+      $('.settings-error').text('The email you entered is not valid.');
+      $('.settings-error').stop().show();
+      flashColor(DARK);
+      return;
+    }
+
     if (sms !== currentUser.sms || email != currentUser.email) {
       $.post('/save', {
         sms: sms,
         email: email
       }, function(res) {
         if (!res.err) {
-          $settings.stop().hide();
+          hideSettings();
           flashColor(ORANGE);
         } else {
-          $('.settings-error').show();
+          $('.settings-error').text(res.err);
+          $('.settings-error').stop().show();
           flashColor(DARK);
         }
       });
     } else {
-      $settings.stop().hide();
+      hideSettings();
     }
   });
 
@@ -147,8 +175,8 @@ $(document).ready(function() {
       $settings.find('input[name=sms]').val(encodeHTML(user.sms));
     }
     $login.stop().fadeOut(function() {
-      $login.find('input[name=username]').val('');
-      $login.find('input[name=password]').val('');
+      $loginForm.find('input[name=username]').val('');
+      $loginForm.find('input[name=password]').val('');
       $('.login-errors').hide();
       changeCount(user.happiness || 0, user.color);
       $username.css('opacity', 0);
@@ -163,7 +191,7 @@ $(document).ready(function() {
     loggedIn = false;
     selectedColor = RED;
     changeCount(ORIGINAL_COUNT);
-    $settings.stop().hide();
+    hideSettings();
     $settings.find('input[name=sms]').val('');
     $settings.find('input[name=email]').val('');
     $number.stop().hide();
@@ -198,11 +226,20 @@ $(document).ready(function() {
     $('.button.register, a.login').removeClass('hidden');
     active = 'register';
   });
+
+  $('a.forgot').click(function() {
+    $forgot.find('input[name=username]').val($loginForm.find('input[name=username]').val());
+    $loginForm.hide();
+    $forgot.show();
+  });
+  $('.forgot .previous').click(function() {
+    backToLogin();
+  });
   $('a.instructions').click(function() {
     $instructions.stop().toggle();
   });
 
-  $('.login.form').submit(function(ev) {
+  $loginForm.submit(function(ev) {
     ev.preventDefault();
 
     var url = active === 'login' ? '/login' : '/register';
@@ -221,6 +258,25 @@ $(document).ready(function() {
         $('.login-errors').text(res.err);
         $('.login-errors').slideDown();
       }
+    });
+  });
+
+  $forgot.submit(function(ev) {
+    ev.preventDefault();
+    $forgot.find('input[type=submit]').attr('disabled', 'disabled');
+
+    $.post('/forgot', {
+      username: $forgot.find('input[name=username]').val(),
+    }, function(res) {
+      if (!res.err) {
+        backToLogin();
+        $('.login-errors').text('Password reset email sent to your ' + res.email.split('@').pop() + ' email address.');
+        $('.login-errors').stop().show();
+      } else {
+        $('.login-errors').text(res.err);
+        $('.login-errors').slideDown();
+      }
+      $forgot.find('input[type=submit]').removeAttr('disabled');
     });
   });
 

@@ -8,8 +8,15 @@ var SkinStore = require('connect-mongoskin');
 
 var bcrypt = require('bcrypt');
 
-// Temporary lost password links.
-var lostUsers = {};
+// mailer
+var nodemailer = require('nodemailer');
+var smtpTransport = nodemailer.createTransport("SMTP", {
+  service: "Gmail",
+  auth: {
+    user: 'moosefrans@gmail.com',
+    pass: process.argv[2] || 'password',
+  }
+});
 
 
 /**
@@ -25,7 +32,10 @@ var lostUsers = {};
  * }
  */
 var users = db.collection('users');
-users.ensureIndex({ 'username' : 1 });
+users.ensureIndex({username: 1});
+users.ensureIndex({email: 1});
+var passwordCodes = db.collection('password_codes');
+passwordCodes.ensureIndex({user: 1});
 /**
  * Happiness: {
  *  username: String,
@@ -35,17 +45,41 @@ users.ensureIndex({ 'username' : 1 });
  */
 function happies() {
   return db.collection(new Date().getFullYear() + 'happies');
-};
+}
 
-function valid(username) {
+function validateUsername(username) {
   return username.length < 21 && /^[a-zA-Z0-9\_]+$/.test(username);
-};
+}
 
+function validateEmail(email) { 
+  var re = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+  return re.test(email);
+}
 
 /** Generate random session ID. */
 function randomId() {
   return Math.random().toString(36).substr(2);
-};
+}
+
+function changePassword(username, password, params, cb) {
+  bcrypt.genSalt(10, function(err, salt) {
+    if (err) {
+      cb(err);
+    } else {
+      bcrypt.hash(password, salt, function(err, hash) {
+        if (err) {
+          cb(err);
+        } else {
+          params = params || {};
+          params.hash = hash;
+          users.update({username: username}, {$set: params}, {}, function(err, user) {
+            cb(err);
+          });
+        }
+      });
+    }
+  });
+}
 
 function loginRequired(req, res, next) {
   if (!req.session.username) {
@@ -87,21 +121,51 @@ app.get('/', function(req, res) {
 // Password reset page.
 app.get('/reset/:key', function(req, res) {
   var key = req.params.key;
-  if (lostUsers[key]) {
-    res.render('reset', { user: lostUsers[key] });
-  } else {
-    res.redirect('/');
-  }
+  passwordCodes.findById(key, function(err, code) {
+    if (code) {
+      users.findById(code.user, function(err, user) {
+        if (user) {
+          res.render('reset', {user: user})
+        } else {
+          res.redirect('/');
+        }
+      });
+    } else {
+      res.redirect('/');
+    }
+  });
 });
 
 // Save new password, redirect to index.
 app.post('/reset/:key', function(req, res) {
   var key = req.params.key;
-  if (lostUsers[key] && lostUsers[key] == req.body.username) {
-    // TODO: Reset password of associated user.
-  } else {
-    res.redirect('/');
+  var newPassword = req.body.password;
+  var confirmPassword = req.body.confirm;
+  if (newPassword !== confirmPassword) {
+    res.send({err: 'Passwords do not match.'});
+    return;
   }
+  passwordCodes.findById(key, function(err, code) {
+    if (code) {
+      users.findById(code.user, function(err, user) {
+        if (user) {
+          changePassword(user.username, newPassword, {}, function(err) {
+            if (err) {
+              res.send({err: 'An unexpected error has occurred. Please email michelle@michellebu.com if this problem persists.'});
+            } else {
+              res.send(200);
+            }
+          });
+        } else {
+          res.send({err: 'This password reset link has expired. Please try again.'});
+        }
+      });
+
+      passwordCodes.removeById(code._id);
+    } else {
+      res.send({err: 'This password reset link has expired. Please try again.'});
+    }
+  });
 });
 
 // Triggered when the client closes the window; saves their color choice.
@@ -136,13 +200,11 @@ app.get('/random_happy', loginRequired, function(req, res) {
 
 // logs in a user, saves session ID, errors if already taken username.
 app.post('/login', function(req, res) {
-  // if data.type == register, then error should say username taken.
-  // otherwise error should say wrong pw. done on front end?
   if (!req.body.username || !req.body.password) {
     res.send({err: 'Please enter a username and password.'});
     return;
   }
-  users.findOne({ username: req.body.username.toLowerCase() }, function(err, user) {
+  users.findOne({username: req.body.username.toLowerCase()}, function(err, user) {
     if (!err && user && user.hash) {
       bcrypt.compare(req.body.password, user.hash, function(err, match) {
         if (match) {
@@ -164,7 +226,7 @@ app.post('/register', function(req, res) {
     res.send({err: 'Please enter a username and password.'});
     return;
   }
-  if (!valid(req.body.username)) {
+  if (!validateUsername(req.body.username)) {
     res.send({err: 'Your username can contain up to 20 letters, numbers, or _.'});
     return;
   }
@@ -222,59 +284,98 @@ app.post('/happy', loginRequired, function(req, res) {
 
 // Saves user email, sms, twitter settings, errors if already used.
 app.post('/save', loginRequired, function(req, res) {
-  // TODO: check to see what changed.
+  if (req.body.email && !validateEmail(req.body.email)) {
+    res.send({err: 'The email you entered is not valid.'});
+    return;
+  }
+
   var sms = req.body.sms;
   if (sms) {
     sms = sms.replace(/\D/g, '');
   }
-  users.update(
-    {username: req.session.username},
-    {
-      $set: {
-        email: req.body.email,
-        ignore: req.body.ignore,
-        twitter: req.body.twitter,
-        sms: sms
-      }
-    },
-    {},
-    function(err) {
+
+  // TODO: make this not so stupid of a codepath.
+  if (req.body.password) {
+    changePassword(req.body.username, req.session.username, {
+      email: req.body.email,
+      sms: sms
+    }, function(err) {
       if (!err) {
         res.send({result: 'Details successfully saved.'});
       } else {
         res.send({err: err});
       }
-    }
-  );
+    });
+  } else {
+    users.update(
+      {username: req.session.username},
+      {
+        $set: {
+          email: req.body.email,
+          sms: sms
+        }
+      },
+      {},
+      function(err) {
+        if (!err) {
+          res.send({result: 'Details successfully saved.'});
+        } else {
+          res.send({err: err});
+        }
+      }
+    );
+  }
 });
 
 
 
 // Sends a lost password email.
-app.post('/lost', function(req, res) {
-  if (req.body.email) {
-    users.findOne({email: req.body.email}, function(err, user) {
-      if (!err && user) {
-        var random = randomId();
-        while (lostUsers[random]) {
-          random = randomId();
-        }
+app.post('/forgot', function(req, res) {
+  function findByQuery(query, input) {
+    users.findOne(query, function(err, user) {
+      if (user && validateEmail(user.email)) { // we need to validate again because legacy.
 
-        var randomUrl = 'http://happinessjar.com/reset/' + random;
-        var msg = {
-          text:    'Hi, ' + user.username + '. Please visit ' + randomURL + ' to change your password to something that\'s easy to remember.',
-          from:    'Happiness Jar <thehappinessjar@gmail.com>',
-          to:      user.email,
-          subject: '[Happiness Jar] Reset your password.',
-        };
+        // TODO: make this less shitty.
+        passwordCodes.insert({user: user._id}, function(err, result) {
+          if (!err) {
+            var result = result[0];
 
-        // TODO: send mail
+            var randomURL = 'http://happinessjar.com/reset/' + result._id;
+            var msg = {
+              text:    'Hi, ' + user.username + '. Please visit ' + randomURL + ' to change your password to something that\'s easy to remember.',
+              from:    'Happiness Moose <moosefrans@gmail.com>',
+              to:      user.email,
+              subject: '[Happiness Jar] Reset your password.',
+            };
+
+            smtpTransport.sendMail(msg, function(err, ignore) {
+              if (err) {
+                res.send({err: 'An unexpected error occurred. Please email michelle@michellebu.com if this keeps happening.'});
+                console.log('MAILER ERROR: ' + err);
+              } else {
+                res.send({email: user.email});
+              }
+            });
+
+          } else {
+            res.send({err: 'An unexpected error occurred. Please email michelle@michellebu.com if this keeps happening.'});
+          }
+        });
+
+      } else if (user) {
+        res.send({err: 'We could not find a valid email address associated with ' + input + '. Please email michelle@michellebu.com to get your password reset.'});
       } else {
-        res.send({error: 'Email does not belong to an account.'});
+        res.send({err: 'We could not find an account associated with ' + input + '.'});
       }
     });
+  }
+
+  var input = req.body.username;
+  if (input) {
+    findByQuery({'$or': [{email: input}, {username: input}]}, input);
   } else {
-    res.send({error: 'Please enter an email.'});
+    // Shouldn't get here.
+    res.send({err: 'Please enter a username or email.'});
   }
 });
 

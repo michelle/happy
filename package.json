@@ -17,6 +17,7 @@
     "voice.js": "~0.1.2",
     "mongoskin": "~0.5.0",
     "bcrypt": "~0.7.3",
-    "connect-mongoskin": "0.0.3"
+    "connect-mongoskin": "0.0.3",
+    "nodemailer": "~0.5.15"
   }
 }
