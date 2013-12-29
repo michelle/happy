@@ -423,7 +423,9 @@ app.post('/new_text', function(req, res) {
               }, function(err, msg, response) {
                 // TODO: figure out how to handle these.
                 // For now we're just assuming success.
-                console.log(err);
+                if (err) {
+                  console.log(err);
+                }
               });
             }
           });
