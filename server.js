@@ -100,6 +100,8 @@ function findRandomHappiness(username, cb) {
         var message = hh.message;
 
         cb(null, {happiness: message, date: date});
+      } else {
+        cb('Nothing found');
       }
     } else {
       cb(err);
