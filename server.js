@@ -7,6 +7,7 @@ var db = mongo.db('mongodb://localhost:27017/happy');
 var SkinStore = require('connect-mongoskin');
 
 var bcrypt = require('bcrypt');
+var request = require('request');
 
 // mailer
 var nodemailer = require('nodemailer');
@@ -14,7 +15,7 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   service: "Gmail",
   auth: {
     user: 'moosefrans@gmail.com',
-    pass: process.argv[2] || 'password',
+    pass: process.argv[2] || 'password'
   }
 });
 
@@ -34,6 +35,7 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
 var users = db.collection('users');
 users.ensureIndex({username: 1});
 users.ensureIndex({email: 1});
+users.ensureIndex({sms: 1});
 var passwordCodes = db.collection('password_codes');
 passwordCodes.ensureIndex({user: 1});
 /**
@@ -87,6 +89,22 @@ function loginRequired(req, res, next) {
     return;
   }
   next();
+}
+
+function findRandomHappiness(username, cb) {
+  happies().find({username: username}).toArray(function(err, h) {
+    if (!err) {
+      if (h.length > 0) {
+        var hh = h[Math.floor(Math.random() * h.length)];
+        var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
+        var message = hh.message;
+
+        cb(null, {happiness: message, date: date});
+      }
+    } else {
+      cb(err);
+    }
+  });
 }
 
 
@@ -183,18 +201,12 @@ app.post('/logout', loginRequired, function(req, res) {
 
 // Retrieves a random happiness for the user.
 app.get('/random_happy', loginRequired, function(req, res) {
-  happies().find({username: req.session.username}).toArray(function(err, h) {
-    if (!err) {
-      if (h.length > 0) {
-        var hh = h[Math.floor(Math.random() * h.length)];
-        var date = (hh.date.getMonth() + 1) + '/' + hh.date.getDate() + '/' + hh.date.getFullYear();
-        var message = hh.message;
-
-        res.send({happiness: message, date: date});
-        return;
-      }
+  findRandomHappiness(req.session.username, function(err, happiness) {
+    if (err) {
+      res.send({err: 'Nothing found'});
+    } else {
+      res.send(happiness);
     }
-    res.send({err: 'Nothing found'});
   });
 });
 
@@ -389,20 +401,47 @@ app.post('/new_text', function(req, res) {
   if (sms && sms.text && sms.number) {
     users.findOne({sms: sms.number}, function(err, user) {
       if (user && user.username) {
-        happies().insert({
-          username: user.username,
-          date: new Date(),
-          message: sms.text
-        }, function(err, result) {
-          if (!err) {
-            users.update({ username: user.username },
-              { $inc: { happiness: 1 } },
-              {},
-              function(err) {
-              }
-            );
-          }
-        });
+
+        // Trim text.
+        if (sms.text.replace(/(^\s*)|(\s*$)/g, '') === ':(') {
+
+          findRandomHappiness(user.username, function(err, happiness) {
+            if (!err) {
+              request({
+                method: 'POST',
+                url: 'https://www.gvmax.com/api/send',
+                body: {
+                  callbackUrl: 'http://requestb.in/1lc43dh1',
+                  pin: '40d1165fdb6442e3be3f3a4d1d3f8dec',
+                  number: sms.number,
+                  text: happiness.happiness
+                }
+              }, function(err, msg, response) {
+                // TODO: figure out how to handle these.
+                console.log(err, msg, response);
+              });
+            }
+          });
+
+        } else {
+
+          happies().insert({
+            username: user.username,
+            date: new Date(),
+            message: sms.text
+          }, function(err, result) {
+            if (!err) {
+              users.update({ username: user.username },
+                { $inc: { happiness: 1 } },
+                {},
+                function(err) {
+                }
+              );
+            }
+          });
+
+        }
+
       }
     });
   }
