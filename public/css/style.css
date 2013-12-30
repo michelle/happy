@@ -782,7 +782,7 @@ input, button {
   -moz-box-sizing: border-box;
   border-radius: 5px;
   max-height: 350px;
-  font-size: 14px;
+  font-size: 13px;
   -webkit-box-shadow: 0 1px 100px #92ae8d;
   -moz-box-shadow: 0 1px 100px #92ae8d;
   box-shadow: 0 1px 100px #92ae8d;
@@ -798,7 +798,7 @@ input, button {
 
 #instructions p {
   margin: 6px;
-  padding: 0 9px;
+  padding: 0 9px 6px 9px;
 }
 
 #instructions .close {
