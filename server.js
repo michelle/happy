@@ -281,13 +281,13 @@ app.post('/happy', loginRequired, function(req, res) {
     username: req.session.username,
     date: new Date(),
     message: req.body.message
-  }, function(err, result) {
+  }, function(err) {
     if (!err) {
       users.update({username: req.session.username},
         {$inc: {happiness: 1}},
         {},
         function(err) {
-          res.send({result: result});
+          res.send(200);
         }
       );
     } else {
