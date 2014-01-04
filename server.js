@@ -75,8 +75,8 @@ function changePassword(username, password, params, cb) {
         } else {
           params = params || {};
           params.hash = hash;
-          users.update({username: username}, {$set: params}, {}, function(err, user) {
-            cb(err);
+          users.findAndModify({username: username}, {}, {$set: params}, {new: true}, function(err, user) {
+            cb(err, user);
           });
         }
       });
@@ -144,7 +144,7 @@ app.get('/', function(req, res) {
           res.render('index', { user: JSON.stringify(user) });
         });
       } else {
-        res.redirect('/logout');
+        res.render('index', { user: '' });
       }
     });
   } else {
@@ -334,26 +334,27 @@ app.post('/save', loginRequired, function(req, res) {
     changePassword(req.body.username, req.session.username, {
       email: req.body.email,
       sms: sms
-    }, function(err) {
+    }, function(err, user) {
       if (!err) {
-        res.send({result: 'Details successfully saved.'});
+        res.send({user: user, result: 'Details successfully saved.'});
       } else {
         res.send({err: err});
       }
     });
   } else {
-    users.update(
+    users.findAndModify(
       {username: req.session.username},
+      {}, // sort
       {
         $set: {
           email: req.body.email,
           sms: sms
         }
       },
-      {},
-      function(err) {
+      {new: true},
+      function(err, user) {
         if (!err) {
-          res.send({result: 'Details successfully saved.'});
+          res.send({user: user, result: 'Details successfully saved.'});
         } else {
           res.send({err: err});
         }
@@ -457,7 +458,7 @@ app.post('/new_text', function(req, res) {
             message: sms.text
           }, function(err, result) {
             if (!err) {
-              users.update({ username: user.username },
+              users.update({username: user.username},
                 { $inc: { happiness: 1 } },
                 {},
                 function(err) {

@@ -117,8 +117,10 @@ $(document).ready(function() {
   $('.settings.form').submit(function(ev) {
     ev.preventDefault();
 
-    var sms = $(this).find('input[name=sms]').val();
-    var email = $(this).find('input[name=email]').val();
+    var $sms = $(this).find('input[name=sms]');
+    var $email = $(this).find('input[name=email]');
+    var sms = $sms.val();
+    var email = $email.val();
 
     if (email && !validateEmail(email)) {
       $('.settings-error').text('The email you entered is not valid.');
@@ -133,7 +135,10 @@ $(document).ready(function() {
         email: email
       }, function(res) {
         if (!res.err) {
+          currentUser = res.user || currentUser;
           hideSettings();
+          $sms.val(currentUser.sms);
+          $email.val(currentUser.email);
           flashColor(ORANGE);
         } else {
           $('.settings-error').text(res.err);
