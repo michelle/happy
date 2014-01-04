@@ -164,7 +164,7 @@ $(document).ready(function() {
   // Update UI for login.
   function loginUI(user) {
     currentUser = user;
-    user.happiness += queued.length;
+    user.currentHappinesses += queued.length;
     flushQueue();
     loggedIn = true;
     // TODO
@@ -178,7 +178,7 @@ $(document).ready(function() {
       $loginForm.find('input[name=username]').val('');
       $loginForm.find('input[name=password]').val('');
       $('.login-errors').hide();
-      changeCount(user.happiness || 0, user.color);
+      changeCount(user.currentHappinesses || 0, user.color);
       $username.css('opacity', 0);
       $username.text(user.username + '\'s');
       $username.animate({'opacity': 1});
@@ -334,7 +334,7 @@ $(document).ready(function() {
       if (res.happiness) {
         $('.happy-message').text(res.happiness);
       } else {
-        $('.happy-message').text('We couldn\'t find any happinesses. Just consider the bad times down payment for the good ones :).');
+        $('.happy-message').text('We couldn\'t find any happinesses for ' + new Date().getFullYear() + '. Just consider the bad times down payment for the good ones :).');
       }
 
       $sadness.fadeIn();

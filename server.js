@@ -48,6 +48,7 @@ passwordCodes.ensureIndex({user: 1});
 function happies() {
   return db.collection(new Date().getFullYear() + 'happies');
 }
+happies().ensureIndex({username: 1});
 
 function validateUsername(username) {
   return username.length < 21 && /^[a-zA-Z0-9\_]+$/.test(username);
@@ -91,8 +92,8 @@ function loginRequired(req, res, next) {
   next();
 }
 
-function findRandomHappiness(username, cb) {
-  happies().find({username: username}).toArray(function(err, h) {
+function findRandomHappiness(year, username, goBack, cb) {
+  db.collection(year + 'happies').find({username: username}).toArray(function(err, h) {
     if (!err) {
       if (h.length > 0) {
         var hh = h[Math.floor(Math.random() * h.length)];
@@ -101,7 +102,12 @@ function findRandomHappiness(username, cb) {
 
         cb(null, {happiness: message, date: date});
       } else {
-        cb('Nothing found');
+        // Go back one year.
+        if (goBack) {
+          findRandomHappiness(year - 1, username, false, cb);
+        } else {
+          cb('Nothing found.');
+        }
       }
     } else {
       cb(err);
@@ -109,6 +115,11 @@ function findRandomHappiness(username, cb) {
   });
 }
 
+function countHappiness(username, cb) {
+  happies().count({username: username}, function(err, count) {
+    cb(count || 0);
+  });
+}
 
 // Initialize main server
 app.use(express.bodyParser());
@@ -128,7 +139,10 @@ app.get('/', function(req, res) {
   if (req.session.username) {
     users.findOne({ username: req.session.username }, function(err, user) {
       if (user) {
-        res.render('index', { user: JSON.stringify(user) });
+        countHappiness(user.username, function(count) {
+          user.currentHappinesses = count;
+          res.render('index', { user: JSON.stringify(user) });
+        });
       } else {
         res.redirect('/logout');
       }
@@ -203,7 +217,7 @@ app.post('/logout', loginRequired, function(req, res) {
 
 // Retrieves a random happiness for the user.
 app.get('/random_happy', loginRequired, function(req, res) {
-  findRandomHappiness(req.session.username, function(err, happiness) {
+  findRandomHappiness(new Date().getFullYear(), req.session.username, true, function(err, happiness) {
     if (err) {
       res.send({err: 'Nothing found'});
     } else {
@@ -223,7 +237,10 @@ app.post('/login', function(req, res) {
       bcrypt.compare(req.body.password, user.hash, function(err, match) {
         if (match) {
           req.session.username = req.body.username.toLowerCase();;
-          res.send({user: user});
+          countHappiness(user.username, function(count) {
+            user.currentHappinesses = count;
+            res.send({user: user});
+          });
         } else {
           res.send({err: 'Password is incorrect.'});
         }
@@ -411,7 +428,7 @@ app.post('/new_text', function(req, res) {
         // Trim text.
         if (sms.text.replace(/(^\s*)|(\s*$)/g, '') === ':(') {
 
-          findRandomHappiness(user.username, function(err, happiness) {
+          findRandomHappiness(new Date().getFullYear(), user.username, true, function(err, happiness) {
             if (!err) {
               request({
                 method: 'POST',
