@@ -1,7 +1,7 @@
 /** Script to run to send everyone their messages on 1/1. */
 var YEAR = 2014;
 
-var cronJob = require('cron').CronJob;
+//var cronJob = require('cron').CronJob;
 
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
@@ -66,7 +66,7 @@ function job() {
       if (!!user.email && user.happiness > 0) {
         (function(u) {
           happinesses.find({username: u.username}).toArray(function(err, happies) {
-            console.log('DRYRUN send to ' + user.email, user.happiness, happies.length);
+            console.log('DRYRUN send to ' + u.email, u.username, u.happiness, happies.length);
             if (happies.length === 0) {
               console.log('No happinesses for ' + u.username);
               return;
