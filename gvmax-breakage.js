@@ -6,6 +6,7 @@ var texts = fs.readFileSync('./2014-texts.txt', 'utf-8');
 var mongo = require('mongoskin');
 var db = mongo.db('mongodb://localhost:27017/happy');
 var users = db.collection('users');
+var happies = db.collection('2014happies');
 
 texts = texts.split('-------------------------');
 console.log(texts.length + ' total texts to process...');
