@@ -72,12 +72,15 @@ function job() {
       if (!!user.email && user.happiness > 0) {
         (function(u) {
           happinesses.find({username: u.username}).toArray(function(err, happies) {
-            console.log('DRYRUN send to ' + u.email, u.username, u.happiness, happies.length);
+            console.log('Sending to ' + u.email, u.username, u.happiness, happies.length);
             if (happies.length === 0) {
               console.log('No happinesses for ' + u.username);
               return;
             }
-            return;
+            if (process.argv[4] !== 'REAL') {
+              console.log('DRYRUN');
+              return;
+            }
             happies = jsonToCsvAndText(happies);
             var html = 'Hey <strong>' + u.username + '</strong>,<br><br>'
                 + 'Enjoy 2014\'s happiest moments...and don\'t forget to make '
@@ -93,6 +96,9 @@ function job() {
             };
 
             smtpTransport.sendMail(msg, function(err, res) {
+              if (err) {
+                console.log('Error sending to ' + u.email);
+              }
               console.log(err || res);
             });
           });
