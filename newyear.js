@@ -60,7 +60,13 @@ function jsonToCsvAndText(arr) {
 }
 
 function job() {
-  users.find({'email': {'$gt': 'bullseye567@gmail.com'}}).toArray(function(err, res) {
+  var lastEmail = process.argv[3];
+  var query = {'$ne': ''};
+  if (lastEmail) {
+    query = {'$gt': lastEmail};
+    console.log('Starting to send from ' + lastEmail);
+  }
+  users.find({'email': query}).toArray(function(err, res) {
     for (var i = 0, ii = res.length; i < ii; i += 1) {
       user = res[i];
       if (!!user.email && user.happiness > 0) {
