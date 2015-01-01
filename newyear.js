@@ -1,5 +1,5 @@
 /** Script to run to send everyone their messages on 1/1. */
-var YEAR = 2013;
+var YEAR = 2014;
 
 var cronJob = require('cron').CronJob;
 
@@ -17,9 +17,13 @@ var smtpTransport = nodemailer.createTransport("SMTP", {
   }
 });
 
+/*
 var j = new cronJob(new Date(YEAR + 1, 0, 1), job, function() {
   console.log('HAPPY NEW YEAR!!!#@');
 }, true);
+*/
+
+job();
 
 // Converts an array of JSON objects a CSV/text string.
 function jsonToCsvAndText(arr) {
@@ -65,7 +69,7 @@ function job() {
           happinesses.find({username: u.username}).toArray(function(err, happies) {
             happies = jsonToCsvAndText(happies);
             var html = 'Hey <strong>' + u.username + '</strong>,<br><br>'
-                + 'Enjoy 2013\'s happiest moments...and don\'t forget to make '
+                + 'Enjoy 2014\'s happiest moments...and don\'t forget to make '
                 + 'new ones in the new year!<br>' + happies.text
                 + '<br>Love,<br><strong><a href="http://happinessjar.com">'
                 + 'Your Happiness Jar</strong></a>';
@@ -74,7 +78,7 @@ function job() {
               html: html,
               from: 'The Happiness Moose <moosefrans@gmail.com>',
               to: u.email,
-              subject: '[Your Happiness Jar] 2013\'s happiest moments.'
+              subject: '[Your Happiness Jar] 2014\'s happiest moments.'
             };
 
             smtpTransport.sendMail(msg, function(err, res) {
