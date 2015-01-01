@@ -33,7 +33,7 @@ texts.forEach(function(text) {
   users.findOne({sms: number}, function(err, user) {
     if (user && user.username) {
 
-      happies().insert({
+      happies.insert({
         username: user.username,
         date: new Date(date),
         message: body
